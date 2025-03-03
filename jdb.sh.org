@@ -11,13 +11,10 @@
 
 ** Publish
 
-#+begin_src emacs-lisp :noweb yes
-  <<export-to-org>>
+#+begin_src emacs-lisp :noweb yes :results none
+  <<org-html-postamble>>
+  <<org-export-dictionary>>
   <<html5>>
-
-  (defun jdb/org-html-postamble (plist)
-    (format "Last update: %s" (format-time-string "%d %b %Y")))
-  (setq org-html-postamble 'jdb/org-html-postamble)
   (setq org-publish-project-alist
         '(("blog"
            :auto-sitemap t
@@ -30,6 +27,7 @@
            :html-html5-fancy t
 
            :base-directory "./blog"
+           :language "en"
            :publishing-function org-html-publish-to-html
            :publishing-directory "./blog"
            :section-numbers t
@@ -38,16 +36,17 @@
 **** Work around hardcoded strings
 
 #+begin_src org :results value raw
-#+language: jdb
+#+language: en
 #+end_src
 
 #+RESULTS:
-#+language: jdb
+#+language: en
 
+#+name org-export-dictionary
 #+begin_src emacs-lisp
   (defconst org-export-dictionary
     '(("Table of Contents"
-      ("jdb" :html "Table of contents" :utf-8 "Table of contents"))))
+      ("en" :html "Table of contents" :utf-8 "Table of contents"))))
 #+end_src
 
 **** Use HTML5
@@ -80,6 +79,14 @@ None yet. An example is ~org-html-src-block~.
     (org-map-entries #'jdb/export-subtree-to-html "EXPORT_FILE_NAME={.+}"))
 #+end_src
 
+**** Define cleaner postamble
+
+#+name: org-html-postamble
+#+begin_src emacs-lisp
+  (defun jdb/org-html-postamble (plist)
+    (format "Last update: %s" (format-time-string "%d %b %Y")))
+  (setq org-html-postamble 'jdb/org-html-postamble)
+#+end_src
 ** Add a structure
 
 #+begin_src
