@@ -15,20 +15,32 @@
   <<org-html-postamble>>
   <<org-export-dictionary>>
   <<html5>>
+  (defun jdb/html-publish-to-html (plist filename pub-dir)
+    "Publish an org file to HTML.
+
+    FILENAME is the filename of the Org file to be published.
+  PLIST is the property list for the given project.
+  PUB-DIR is the publishing directory.
+
+    Return output file name."
+    (org-publish-org-to 'jdb/html filename
+  	                    (concat (when (> (length org-html-extension) 0) ".")
+  		                          (or (plist-get plist :html-extension)
+  			                            org-html-extension
+  			                            "html"))
+  	                    plist pub-dir))
   (setq org-publish-project-alist
         '(("blog"
            :auto-sitemap t
            :sitemap-filename "index.org"
            :sitemap-title "Blog"
 
-           :html-head-include-default-style nil
            :html-head "<link rel=\"stylesheet\" type=\"text/css\" href=\"../reset.css\" />"
            :html-head "<link rel=\"stylesheet\" type=\"text/css\" href=\"../stylesheet.css\" />"
-           :html-html5-fancy t
 
            :base-directory "./blog"
            :language "en"
-           :publishing-function org-html-publish-to-html
+           :publishing-function jdb/html-publish-to-html
            :publishing-directory "./blog"
            :section-numbers t
            :with-toc t)))
@@ -65,13 +77,74 @@ Org’s HTML exporter does not by default enable new block elements introduced w
 
 **** Define transcode functions
 
-None yet. An example is ~org-html-src-block~.
+#+begin_src emacs-lisp emacs-lisp :results none
+    (defun jdb/html--parse-string (str)
+      "Parse STR and return a DOM."
+      (with-temp-buffer
+        (insert (or str ""))
+        (libxml-parse-html-region (point-min) (point-max))))
+
+    (defun jdb/html--build-body (contents info &rest other)
+      "Return information for the <body>..</body> of the HTML output.
+         CONTENTS is the transcoded contents string.
+         INFO is a plist used as a communication channel.
+         OTHER is a plist for additional nodes."
+      (setq node-content (dom-node "div" '((id . "content") (class . "content"))))
+      (when (plist-get other :before)
+        (dolist (node (plist-get other :before)) (dom-append-child node-content node)))
+      (dolist (node (dom-children (dom-by-tag (jdb/html--parse-string contents) 'body))) (dom-append-child node-content node))
+      (when (plist-get other :after)
+        (dolist (node (plist-get other :after)) (dom-append-child node-content node)))
+      (dom-node "body" () node-content))
+
+    (defun jdb/html--build-head (info &rest other)
+      "Return information for the <head>..</head> of the HTML output.
+         INFO is a plist used as a communication channel.
+         OTHER is a plist for additional nodes."
+      (setq node-head (dom-node "head" ()))
+      (dolist (node (dom-children (dom-by-tag (jdb/html--parse-string (plist-get info :html-head)) 'head)))
+        (dom-append-child node-head node))
+      (dolist (node (dom-children (dom-by-tag (jdb/html--parse-string (plist-get info :html-head-extra)) 'head)))
+        (dom-append-child node-head node))
+      (when (and (plist-get info :html-htmlized-css-url)
+                 (eq org-html-htmlize-output-type 'css))
+        (dom-append-child node-head
+                          (dom-node "link" `((rel . "stylesheet")
+                                             (href . ,(plist-get info :html-htmlized-css-url))
+                                             (type . "text/css")))))
+      (when (plist-get other :before)
+        (dolist (node (plist-get other :before)) (dom-add-child-before node-head node)))
+      (when (plist-get other :after)
+        (dolist (node (plist-get other :after)) (dom-append-child node-head node)))
+      node-head)
+
+    (defun jdb/html-template (contents info)
+      "Return complete document string after HTML conversion.
+         CONTENTS is the transcoded contents string.
+         INFO is a plist holding export options."
+      (let* ((title (org-export-data (plist-get info :title) info))
+             (node-title (dom-node "meta" `((title . ,title))))
+             (node-charset (dom-node "meta" '((charset . "utf-8"))))
+             (node-author (dom-node "meta" `((author . ,(org-export-data (plist-get info :author) info)))))
+             (node-generator (dom-node "meta" '((generator . "Org"))))
+             (node-head (jdb/html--build-head info :after (list node-charset node-title node-author node-generator)))
+             (node-h1 (dom-node "h1" '((class . "title")) title))
+             (node-header (dom-node "header" () node-h1))
+             (node-body (jdb/html--build-body contents info :before (list node-header)))
+             (node-html (dom-node "html" () node-head node-body)))
+        (with-temp-buffer (insert "<!DOCTYPE html>") (dom-print node-html) (buffer-string))))
+    (org-export-define-derived-backend 'jdb/html 'html
+      :translate-alist '((template . jdb/html-template)))
+#+end_src
+
 **** Define export functions
 
 #+name: export-to-html
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :results none
   (defun jdb/export-subtree-to-html ()
-    (org-export-to-file 'html (cdr (assoc "EXPORT_FILE_NAME" (org-entry-properties))) nil t))
+    (let ((filename (cdr (assoc "EXPORT_FILE_NAME" (org-entry-properties)))))
+      (org-export-to-file 'jdb/html filename nil t)
+      (shell-command (format "prettier -w --print-width 999 %s" filename))))
   (defun jdb/export-to-html ()
     (interactive)
     (org-babel-tangle)
@@ -313,6 +386,15 @@ Tangle the stylesheet as ~stylesheet.css~.
   --border-width-l: 4px;
 #+end_src
 
+*** Use grid layout
+
+#+name: grid
+#+begin_src css
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr /* nav */ 3fr /* content */;
+  }
+#+end_src
 *** Set code styling to match my editor
 
 #+name: code

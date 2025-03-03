@@ -1,203 +1,269 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<!-- 2025-03-03 Mon 11:25 -->
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Work in this file</title>
-<meta name="author" content="Jack Baldry" />
-<meta name="generator" content="Org Mode" />
-<link rel="stylesheet" type="text/css" href="reset.css" />
-<link rel="stylesheet" type="text/css" href="stylesheet.css" />
-</head>
-<body>
-<div id="content" class="content">
-<header>
-<h1 class="title">Work in this file</h1>
-</header><nav id="table-of-contents" role="doc-toc">
-<h2>Table of contents</h2>
-<div id="text-table-of-contents" role="doc-toc">
-<ul>
-<li><a href="#org09032e4">1. Publish</a>
-<ul>
-<li>
-<ul>
-<li><a href="#org0b4bbea">1.0.1. Work around hardcoded strings</a></li>
-<li><a href="#org16f1bf5">1.0.2. Use HTML5</a></li>
-<li><a href="#org587b2a7">1.0.3. Define transcode functions</a></li>
-<li><a href="#orgda1a803">1.0.4. Define export functions</a></li>
-<li><a href="#orgfbe12e1">1.0.5. Define cleaner postamble</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#orge43faf2">2. Add a structure</a></li>
-<li><a href="#org68cf245">3. Tangle</a></li>
-<li><a href="#orga0549cc">4. Ensure pretty output</a></li>
-<li><a href="#org7b73b9c">5. Format buffer</a></li>
-<li><a href="#org5518b41">6. Add babel execute for Org src</a></li>
-</ul>
-</div>
-</nav>
-<div id="outline-container-org09032e4" class="outline-2">
-<h2 id="org09032e4"><span class="section-number-2">1.</span> Publish</h2>
-<div class="outline-text-2" id="text-1">
-<div class="org-src-container">
-<pre class="src src-emacs-lisp">(<span style="color: #c48702; font-weight: bold;">defun</span> <span style="color: #3dbbb0;">jdb/org-html-postamble</span> (plist)
-  (format <span style="color: #f06a3f;">"Last update: %s"</span> (format-time-string <span style="color: #f06a3f;">"%d %b %Y"</span>)))
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="reset.css" />
+    <link rel="stylesheet" type="text/css" href="stylesheet.css" />
+    <meta charset="utf-8" />
+    <meta title="Work in this file" />
+    <meta author="Jack Baldry" />
+    <meta generator="Org" />
+  </head>
+  <body>
+    <div id="content" class="content">
+      <header><h1 class="title">Work in this file</h1></header>
+      <nav id="table-of-contents" role="doc-toc">
+        <h2>Table of contents</h2>
+        <div id="text-table-of-contents" role="doc-toc">
+          <ul>
+            <li>
+              <a href="#org3a06e38">1. Publish</a>
+              <ul>
+                <li>
+                  <ul>
+                    <li><a href="#orga0b9d53">1.0.1. Work around hardcoded strings</a></li>
+                    <li><a href="#org2707473">1.0.2. Use HTML5</a></li>
+                    <li><a href="#org35853a8">1.0.3. Define transcode functions</a></li>
+                    <li><a href="#org4fb3650">1.0.4. Define export functions</a></li>
+                    <li><a href="#orge16ea04">1.0.5. Define cleaner postamble</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li><a href="#orgce9ac2a">2. Add a structure</a></li>
+            <li><a href="#org26cd171">3. Tangle</a></li>
+            <li><a href="#org030fcea">4. Ensure pretty output</a></li>
+            <li><a href="#org11635f6">5. Format buffer</a></li>
+            <li><a href="#org3e862c4">6. Add babel execute for Org src</a></li>
+          </ul>
+        </div>
+      </nav>
+      <div id="outline-container-org3a06e38" class="outline-2">
+        <h2 id="org3a06e38"><span class="section-number-2">1.</span> Publish</h2>
+        <div class="outline-text-2" id="text-1">
+          <div class="org-src-container">
+            <pre class="src src-emacs-lisp">(<span style="color: #c48702; font-weight: bold;">defun</span> <span style="color: #3dbbb0;">jdb/org-html-postamble</span> (plist)
+  (format <span style="color: #f06a3f;">&quot;Last update: %s&quot;</span> (format-time-string <span style="color: #f06a3f;">&quot;%d %b %Y&quot;</span>)))
 (<span style="color: #c48702; font-weight: bold;">setq</span> org-html-postamble 'jdb/org-html-postamble)
 
-(<span style="color: #c48702; font-weight: bold;">setq</span> org-html-doctype <span style="color: #f06a3f;">"html5"</span>)
+(<span style="color: #c48702; font-weight: bold;">setq</span> org-html-doctype <span style="color: #f06a3f;">&quot;html5&quot;</span>)
 (<span style="color: #c48702; font-weight: bold;">setq</span> org-html-html5-fancy t)
+(<span style="color: #c48702; font-weight: bold;">defun</span> <span style="color: #3dbbb0;">jdb/html-publish-to-html</span> (plist filename pub-dir)
+  <span style="color: #5f9f6f; font-style: italic;">&quot;Publish an org file to HTML.</span>
+
+<span style="color: #5f9f6f; font-style: italic;">  FILENAME is the filename of the Org file to be published.</span>
+<span style="color: #5f9f6f; font-style: italic;">PLIST is the property list for the given project.</span>
+<span style="color: #5f9f6f; font-style: italic;">PUB-DIR is the publishing directory.</span>
+
+<span style="color: #5f9f6f; font-style: italic;">  Return output file name.&quot;</span>
+  (org-publish-org-to 'jdb/html filename
+                      (concat (<span style="color: #c48702; font-weight: bold;">when</span> (&gt; (length org-html-extension) 0) <span style="color: #f06a3f;">&quot;.&quot;</span>)
+                              (<span style="color: #c48702; font-weight: bold;">or</span> (plist-get plist <span style="color: #ff7a7f; font-weight: bold;">:html-extension</span>)
+                                  org-html-extension
+                                  <span style="color: #f06a3f;">&quot;html&quot;</span>))
+                      plist pub-dir))
 (<span style="color: #c48702; font-weight: bold;">setq</span> org-publish-project-alist
-      '((<span style="color: #f06a3f;">"blog"</span>
+      '((<span style="color: #f06a3f;">&quot;blog&quot;</span>
          <span style="color: #ff7a7f; font-weight: bold;">:auto-sitemap</span> t
-         <span style="color: #ff7a7f; font-weight: bold;">:sitemap-filename</span> <span style="color: #f06a3f;">"index.org"</span>
-         <span style="color: #ff7a7f; font-weight: bold;">:sitemap-title</span> <span style="color: #f06a3f;">"Blog"</span>
+         <span style="color: #ff7a7f; font-weight: bold;">:sitemap-filename</span> <span style="color: #f06a3f;">&quot;index.org&quot;</span>
+         <span style="color: #ff7a7f; font-weight: bold;">:sitemap-title</span> <span style="color: #f06a3f;">&quot;Blog&quot;</span>
 
-         <span style="color: #ff7a7f; font-weight: bold;">:html-head-include-default-style</span> nil
-         <span style="color: #ff7a7f; font-weight: bold;">:html-head</span> <span style="color: #f06a3f;">"&lt;link rel=\"stylesheet\" type=\"text/css\" href=\"../reset.css\" /&gt;"</span>
-         <span style="color: #ff7a7f; font-weight: bold;">:html-head</span> <span style="color: #f06a3f;">"&lt;link rel=\"stylesheet\" type=\"text/css\" href=\"../stylesheet.css\" /&gt;"</span>
-         <span style="color: #ff7a7f; font-weight: bold;">:html-html5-fancy</span> t
+         <span style="color: #ff7a7f; font-weight: bold;">:html-head</span> <span style="color: #f06a3f;">&quot;&lt;link rel=\&quot;stylesheet\&quot; type=\&quot;text/css\&quot; href=\&quot;../reset.css\&quot; /&gt;&quot;</span>
+         <span style="color: #ff7a7f; font-weight: bold;">:html-head</span> <span style="color: #f06a3f;">&quot;&lt;link rel=\&quot;stylesheet\&quot; type=\&quot;text/css\&quot; href=\&quot;../stylesheet.css\&quot; /&gt;&quot;</span>
 
-         <span style="color: #ff7a7f; font-weight: bold;">:base-directory</span> <span style="color: #f06a3f;">"./blog"</span>
-         <span style="color: #ff7a7f; font-weight: bold;">:language</span> <span style="color: #f06a3f;">"en"</span>
-         <span style="color: #ff7a7f; font-weight: bold;">:publishing-function</span> org-html-publish-to-html
-         <span style="color: #ff7a7f; font-weight: bold;">:publishing-directory</span> <span style="color: #f06a3f;">"./blog"</span>
+         <span style="color: #ff7a7f; font-weight: bold;">:base-directory</span> <span style="color: #f06a3f;">&quot;./blog&quot;</span>
+         <span style="color: #ff7a7f; font-weight: bold;">:language</span> <span style="color: #f06a3f;">&quot;en&quot;</span>
+         <span style="color: #ff7a7f; font-weight: bold;">:publishing-function</span> jdb/html-publish-to-html
+         <span style="color: #ff7a7f; font-weight: bold;">:publishing-directory</span> <span style="color: #f06a3f;">&quot;./blog&quot;</span>
          <span style="color: #ff7a7f; font-weight: bold;">:section-numbers</span> t
          <span style="color: #ff7a7f; font-weight: bold;">:with-toc</span> t)))
 </pre>
-</div>
-</div>
-<div id="outline-container-org0b4bbea" class="outline-4">
-<h4 id="org0b4bbea"><span class="section-number-4">1.0.1.</span> Work around hardcoded strings</h4>
-<div class="outline-text-4" id="text-1-0-1">
-<div class="org-src-container">
-<pre class="src src-org"><span style="color: #887c8a;">language: en</span>
+          </div>
+        </div>
+        <div id="outline-container-orga0b9d53" class="outline-4">
+          <h4 id="orga0b9d53"><span class="section-number-4">1.0.1.</span> Work around hardcoded strings</h4>
+          <div class="outline-text-4" id="text-1-0-1">
+            <div class="org-src-container">
+              <pre class="src src-org"><span style="color: #887c8a;">language: en</span>
 </pre>
-</div>
-<p>
-#+name org-export-dictionary
-</p>
-<div class="org-src-container">
-<pre class="src src-emacs-lisp">(<span style="color: #c48702; font-weight: bold;">defconst</span> <span style="color: #6fafff;">org-export-dictionary</span>
-  '((<span style="color: #f06a3f;">"Table of Contents"</span>
-    (<span style="color: #f06a3f;">"en"</span> <span style="color: #ff7a7f; font-weight: bold;">:html</span> <span style="color: #f06a3f;">"Table of contents"</span> <span style="color: #ff7a7f; font-weight: bold;">:utf-8</span> <span style="color: #f06a3f;">"Table of contents"</span>))))
+            </div>
+            <p>#+name org-export-dictionary</p>
+            <div class="org-src-container">
+              <pre class="src src-emacs-lisp">(<span style="color: #c48702; font-weight: bold;">defconst</span> <span style="color: #6fafff;">org-export-dictionary</span>
+  '((<span style="color: #f06a3f;">&quot;Table of Contents&quot;</span>
+    (<span style="color: #f06a3f;">&quot;en&quot;</span> <span style="color: #ff7a7f; font-weight: bold;">:html</span> <span style="color: #f06a3f;">&quot;Table of contents&quot;</span> <span style="color: #ff7a7f; font-weight: bold;">:utf-8</span> <span style="color: #f06a3f;">&quot;Table of contents&quot;</span>))))
 </pre>
-</div>
-</div>
-</div>
-<div id="outline-container-org16f1bf5" class="outline-4">
-<h4 id="org16f1bf5"><span class="section-number-4">1.0.2.</span> Use HTML5</h4>
-<div class="outline-text-4" id="text-1-0-2">
-<p>
-From <a href="https://orgmode.org/manual/HTML-doctypes.html">HTML Doctypes</a>.
-</p>
+            </div>
+          </div>
+        </div>
+        <div id="outline-container-org2707473" class="outline-4">
+          <h4 id="org2707473"><span class="section-number-4">1.0.2.</span> Use HTML5</h4>
+          <div class="outline-text-4" id="text-1-0-2">
+            <p>From <a href="https://orgmode.org/manual/HTML-doctypes.html">HTML Doctypes</a>.</p>
 
-<blockquote>
-<p>
-Org’s HTML exporter does not by default enable new block elements introduced with the HTML5 standard. To enable them, set org-html-html5-fancy to non-nil. Or use an ‘OPTIONS’ line in the file to set ‘html5-fancy’.
-</p>
-</blockquote>
+            <blockquote>
+              <p>Org’s HTML exporter does not by default enable new block elements introduced with the HTML5 standard. To enable them, set org-html-html5-fancy to non-nil. Or use an ‘OPTIONS’ line in the file to set ‘html5-fancy’.</p>
+            </blockquote>
 
-<div class="org-src-container">
-<pre class="src src-emacs-lisp" id="orgf2fd223">(<span style="color: #c48702; font-weight: bold;">setq</span> org-html-doctype <span style="color: #f06a3f;">"html5"</span>)
+            <div class="org-src-container">
+              <pre class="src src-emacs-lisp" id="org48eae09">(<span style="color: #c48702; font-weight: bold;">setq</span> org-html-doctype <span style="color: #f06a3f;">&quot;html5&quot;</span>)
 (<span style="color: #c48702; font-weight: bold;">setq</span> org-html-html5-fancy t)
 </pre>
-</div>
-</div>
-</div>
-<div id="outline-container-org587b2a7" class="outline-4">
-<h4 id="org587b2a7"><span class="section-number-4">1.0.3.</span> Define transcode functions</h4>
-<div class="outline-text-4" id="text-1-0-3">
-<p>
-None yet. An example is <code>org-html-src-block</code>.
-</p>
-</div>
-</div>
-<div id="outline-container-orgda1a803" class="outline-4">
-<h4 id="orgda1a803"><span class="section-number-4">1.0.4.</span> Define export functions</h4>
-<div class="outline-text-4" id="text-1-0-4">
-<div class="org-src-container">
-<pre class="src src-emacs-lisp" id="org1cbe0ca">(<span style="color: #c48702; font-weight: bold;">defun</span> <span style="color: #3dbbb0;">jdb/export-subtree-to-html</span> ()
-  (org-export-to-file 'html (cdr (assoc <span style="color: #f06a3f;">"EXPORT_FILE_NAME"</span> (org-entry-properties))) nil t))
+            </div>
+          </div>
+        </div>
+        <div id="outline-container-org35853a8" class="outline-4">
+          <h4 id="org35853a8"><span class="section-number-4">1.0.3.</span> Define transcode functions</h4>
+          <div class="outline-text-4" id="text-1-0-3">
+            <div class="org-src-container">
+              <pre class="src src-emacs-lisp">(<span style="color: #c48702; font-weight: bold;">defun</span> <span style="color: #3dbbb0;">jdb/html--parse-string</span> (str)
+  <span style="color: #5f9f6f; font-style: italic;">&quot;Parse STR and return a DOM.&quot;</span>
+  (<span style="color: #c48702; font-weight: bold;">with-temp-buffer</span>
+    (insert (<span style="color: #c48702; font-weight: bold;">or</span> str <span style="color: #f06a3f;">&quot;&quot;</span>))
+    (libxml-parse-html-region (point-min) (point-max))))
+
+(<span style="color: #c48702; font-weight: bold;">defun</span> <span style="color: #3dbbb0;">jdb/html--build-body</span> (contents info <span style="color: #2fa526;">&amp;rest</span> other)
+  <span style="color: #5f9f6f; font-style: italic;">&quot;Return information for the &lt;body&gt;..&lt;/body&gt; of the HTML output.</span>
+<span style="color: #5f9f6f; font-style: italic;">     CONTENTS is the transcoded contents string.</span>
+<span style="color: #5f9f6f; font-style: italic;">     INFO is a plist used as a communication channel.</span>
+<span style="color: #5f9f6f; font-style: italic;">     OTHER is a plist for additional nodes.&quot;</span>
+  (<span style="color: #c48702; font-weight: bold;">setq</span> node-content (dom-node <span style="color: #f06a3f;">&quot;div&quot;</span> '((id . <span style="color: #f06a3f;">&quot;content&quot;</span>) (class . <span style="color: #f06a3f;">&quot;content&quot;</span>))))
+  (<span style="color: #c48702; font-weight: bold;">when</span> (plist-get other <span style="color: #ff7a7f; font-weight: bold;">:before</span>)
+    (<span style="color: #c48702; font-weight: bold;">dolist</span> (node (plist-get other <span style="color: #ff7a7f; font-weight: bold;">:before</span>)) (dom-append-child node-content node)))
+  (<span style="color: #c48702; font-weight: bold;">dolist</span> (node (dom-children (dom-by-tag (jdb/html--parse-string contents) 'body))) (dom-append-child node-content node))
+  (<span style="color: #c48702; font-weight: bold;">when</span> (plist-get other <span style="color: #ff7a7f; font-weight: bold;">:after</span>)
+    (<span style="color: #c48702; font-weight: bold;">dolist</span> (node (plist-get other <span style="color: #ff7a7f; font-weight: bold;">:after</span>)) (dom-append-child node-content node)))
+  (dom-node <span style="color: #f06a3f;">&quot;body&quot;</span> () node-content))
+
+(<span style="color: #c48702; font-weight: bold;">defun</span> <span style="color: #3dbbb0;">jdb/html--build-head</span> (info <span style="color: #2fa526;">&amp;rest</span> other)
+  <span style="color: #5f9f6f; font-style: italic;">&quot;Return information for the &lt;head&gt;..&lt;/head&gt; of the HTML output.</span>
+<span style="color: #5f9f6f; font-style: italic;">     INFO is a plist used as a communication channel.</span>
+<span style="color: #5f9f6f; font-style: italic;">     OTHER is a plist for additional nodes.&quot;</span>
+  (<span style="color: #c48702; font-weight: bold;">setq</span> node-head (dom-node <span style="color: #f06a3f;">&quot;head&quot;</span> ()))
+  (<span style="color: #c48702; font-weight: bold;">dolist</span> (node (dom-children (dom-by-tag (jdb/html--parse-string (plist-get info <span style="color: #ff7a7f; font-weight: bold;">:html-head</span>)) 'head)))
+    (dom-append-child node-head node))
+  (<span style="color: #c48702; font-weight: bold;">dolist</span> (node (dom-children (dom-by-tag (jdb/html--parse-string (plist-get info <span style="color: #ff7a7f; font-weight: bold;">:html-head-extra</span>)) 'head)))
+    (dom-append-child node-head node))
+  (<span style="color: #c48702; font-weight: bold;">when</span> (<span style="color: #c48702; font-weight: bold;">and</span> (plist-get info <span style="color: #ff7a7f; font-weight: bold;">:html-htmlized-css-url</span>)
+             (eq org-html-htmlize-output-type 'css))
+    (dom-append-child node-head
+                      (dom-node <span style="color: #f06a3f;">&quot;link&quot;</span> `((rel . <span style="color: #f06a3f;">&quot;stylesheet&quot;</span>)
+                                         (href . ,(plist-get info <span style="color: #ff7a7f; font-weight: bold;">:html-htmlized-css-url</span>))
+                                         (type . <span style="color: #f06a3f;">&quot;text/css&quot;</span>)))))
+  (<span style="color: #c48702; font-weight: bold;">when</span> (plist-get other <span style="color: #ff7a7f; font-weight: bold;">:before</span>)
+    (<span style="color: #c48702; font-weight: bold;">dolist</span> (node (plist-get other <span style="color: #ff7a7f; font-weight: bold;">:before</span>)) (dom-add-child-before node-head node)))
+  (<span style="color: #c48702; font-weight: bold;">when</span> (plist-get other <span style="color: #ff7a7f; font-weight: bold;">:after</span>)
+    (<span style="color: #c48702; font-weight: bold;">dolist</span> (node (plist-get other <span style="color: #ff7a7f; font-weight: bold;">:after</span>)) (dom-append-child node-head node)))
+  node-head)
+
+(<span style="color: #c48702; font-weight: bold;">defun</span> <span style="color: #3dbbb0;">jdb/html-template</span> (contents info)
+  <span style="color: #5f9f6f; font-style: italic;">&quot;Return complete document string after HTML conversion.</span>
+<span style="color: #5f9f6f; font-style: italic;">     CONTENTS is the transcoded contents string.</span>
+<span style="color: #5f9f6f; font-style: italic;">     INFO is a plist holding export options.&quot;</span>
+  (<span style="color: #c48702; font-weight: bold;">let*</span> ((title (org-export-data (plist-get info <span style="color: #ff7a7f; font-weight: bold;">:title</span>) info))
+         (node-title (dom-node <span style="color: #f06a3f;">&quot;meta&quot;</span> `((title . ,title))))
+         (node-charset (dom-node <span style="color: #f06a3f;">&quot;meta&quot;</span> '((charset . <span style="color: #f06a3f;">&quot;utf-8&quot;</span>))))
+         (node-author (dom-node <span style="color: #f06a3f;">&quot;meta&quot;</span> `((author . ,(org-export-data (plist-get info <span style="color: #ff7a7f; font-weight: bold;">:author</span>) info)))))
+         (node-generator (dom-node <span style="color: #f06a3f;">&quot;meta&quot;</span> '((generator . <span style="color: #f06a3f;">&quot;Org&quot;</span>))))
+         (node-head (jdb/html--build-head info <span style="color: #ff7a7f; font-weight: bold;">:after</span> (list node-charset node-title node-author node-generator)))
+         (node-h1 (dom-node <span style="color: #f06a3f;">&quot;h1&quot;</span> '((class . <span style="color: #f06a3f;">&quot;title&quot;</span>)) title))
+         (node-header (dom-node <span style="color: #f06a3f;">&quot;header&quot;</span> () node-h1))
+         (node-body (jdb/html--build-body contents info <span style="color: #ff7a7f; font-weight: bold;">:before</span> (list node-header)))
+         (node-html (dom-node <span style="color: #f06a3f;">&quot;html&quot;</span> () node-head node-body)))
+    (<span style="color: #c48702; font-weight: bold;">with-temp-buffer</span> (insert <span style="color: #f06a3f;">&quot;&lt;!DOCTYPE html&gt;&quot;</span>) (dom-print node-html) (buffer-string))))
+(org-export-define-derived-backend 'jdb/html 'html
+  <span style="color: #ff7a7f; font-weight: bold;">:translate-alist</span> '((template . jdb/html-template)))
+</pre>
+            </div>
+          </div>
+        </div>
+        <div id="outline-container-org4fb3650" class="outline-4">
+          <h4 id="org4fb3650"><span class="section-number-4">1.0.4.</span> Define export functions</h4>
+          <div class="outline-text-4" id="text-1-0-4">
+            <div class="org-src-container">
+              <pre class="src src-emacs-lisp" id="org506d3fd">(<span style="color: #c48702; font-weight: bold;">defun</span> <span style="color: #3dbbb0;">jdb/export-subtree-to-html</span> ()
+  (<span style="color: #c48702; font-weight: bold;">let</span> ((filename (cdr (assoc <span style="color: #f06a3f;">&quot;EXPORT_FILE_NAME&quot;</span> (org-entry-properties)))))
+    (org-export-to-file 'jdb/html filename nil t)
+    (shell-command (format <span style="color: #f06a3f;">&quot;prettier -w --print-width 999 %s&quot;</span> filename))))
 (<span style="color: #c48702; font-weight: bold;">defun</span> <span style="color: #3dbbb0;">jdb/export-to-html</span> ()
   (<span style="color: #c48702; font-weight: bold;">interactive</span>)
   (org-babel-tangle)
-  (org-publish <span style="color: #f06a3f;">"blog"</span>)
-  (org-map-entries #'jdb/export-subtree-to-html <span style="color: #f06a3f;">"EXPORT_FILE_NAME={.+}"</span>))
+  (org-publish <span style="color: #f06a3f;">&quot;blog&quot;</span>)
+  (org-map-entries #'jdb/export-subtree-to-html <span style="color: #f06a3f;">&quot;EXPORT_FILE_NAME={.+}&quot;</span>))
 </pre>
-</div>
-</div>
-</div>
-<div id="outline-container-orgfbe12e1" class="outline-4">
-<h4 id="orgfbe12e1"><span class="section-number-4">1.0.5.</span> Define cleaner postamble</h4>
-<div class="outline-text-4" id="text-1-0-5">
-<div class="org-src-container">
-<pre class="src src-emacs-lisp" id="org18c2472">(<span style="color: #c48702; font-weight: bold;">defun</span> <span style="color: #3dbbb0;">jdb/org-html-postamble</span> (plist)
-  (format <span style="color: #f06a3f;">"Last update: %s"</span> (format-time-string <span style="color: #f06a3f;">"%d %b %Y"</span>)))
+            </div>
+          </div>
+        </div>
+        <div id="outline-container-orge16ea04" class="outline-4">
+          <h4 id="orge16ea04"><span class="section-number-4">1.0.5.</span> Define cleaner postamble</h4>
+          <div class="outline-text-4" id="text-1-0-5">
+            <div class="org-src-container">
+              <pre class="src src-emacs-lisp" id="org589b76b">(<span style="color: #c48702; font-weight: bold;">defun</span> <span style="color: #3dbbb0;">jdb/org-html-postamble</span> (plist)
+  (format <span style="color: #f06a3f;">&quot;Last update: %s&quot;</span> (format-time-string <span style="color: #f06a3f;">&quot;%d %b %Y&quot;</span>)))
 (<span style="color: #c48702; font-weight: bold;">setq</span> org-html-postamble 'jdb/org-html-postamble)
 </pre>
-</div>
-</div>
-</div>
-</div>
-<div id="outline-container-orge43faf2" class="outline-2">
-<h2 id="orge43faf2"><span class="section-number-2">2.</span> Add a structure</h2>
-<div class="outline-text-2" id="text-2">
-<div class="org-src-container">
-<pre class="src src-nil">C-c C-,
-</pre>
-</div>
-</div>
-</div>
-<div id="outline-container-org68cf245" class="outline-2">
-<h2 id="org68cf245"><span class="section-number-2">3.</span> Tangle</h2>
-<div class="outline-text-2" id="text-3">
-<div class="org-src-container">
-<pre class="src src-nil">C-c C-v t
-</pre>
-</div>
-</div>
-</div>
-<div id="outline-container-orga0549cc" class="outline-2">
-<h2 id="orga0549cc"><span class="section-number-2">4.</span> Ensure pretty output</h2>
-<div class="outline-text-2" id="text-4">
-<div class="org-src-container">
-<pre class="src src-emacs-lisp">(add-hook 'org-babel-post-tangle-hook #'whitespace-cleanup)
-</pre>
-</div>
-</div>
-</div>
-<div id="outline-container-org7b73b9c" class="outline-2">
-<h2 id="org7b73b9c"><span class="section-number-2">5.</span> Format buffer</h2>
-<div class="outline-text-2" id="text-5">
-<div class="org-src-container">
-<pre class="src src-nil">C-x h C-M-\ C-u C-SPC C-u C-SPC
-</pre>
-</div>
-</div>
-</div>
-<div id="outline-container-org5518b41" class="outline-2">
-<h2 id="org5518b41"><span class="section-number-2">6.</span> Add babel execute for Org src</h2>
-<div class="outline-text-2" id="text-6">
-<p>
-Have Org src within the Org file.
-</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="outline-container-orgce9ac2a" class="outline-2">
+        <h2 id="orgce9ac2a"><span class="section-number-2">2.</span> Add a structure</h2>
+        <div class="outline-text-2" id="text-2">
+          <div class="org-src-container">
+            <pre class="src src-nil">
+C-c C-,
+</pre
+            >
+          </div>
+        </div>
+      </div>
+      <div id="outline-container-org26cd171" class="outline-2">
+        <h2 id="org26cd171"><span class="section-number-2">3.</span> Tangle</h2>
+        <div class="outline-text-2" id="text-3">
+          <div class="org-src-container">
+            <pre class="src src-nil">
+C-c C-v t
+</pre
+            >
+          </div>
+        </div>
+      </div>
+      <div id="outline-container-org030fcea" class="outline-2">
+        <h2 id="org030fcea"><span class="section-number-2">4.</span> Ensure pretty output</h2>
+        <div class="outline-text-2" id="text-4">
+          <div class="org-src-container">
+            <pre class="src src-emacs-lisp">
+(add-hook 'org-babel-post-tangle-hook #'whitespace-cleanup)
+</pre
+            >
+          </div>
+        </div>
+      </div>
+      <div id="outline-container-org11635f6" class="outline-2">
+        <h2 id="org11635f6"><span class="section-number-2">5.</span> Format buffer</h2>
+        <div class="outline-text-2" id="text-5">
+          <div class="org-src-container">
+            <pre class="src src-nil">
+C-x h C-M-\ C-u C-SPC C-u C-SPC
+</pre
+            >
+          </div>
+        </div>
+      </div>
+      <div id="outline-container-org3e862c4" class="outline-2">
+        <h2 id="org3e862c4"><span class="section-number-2">6.</span> Add babel execute for Org src</h2>
+        <div class="outline-text-2" id="text-6">
+          <p>Have Org src within the Org file.</p>
 
-<div class="org-src-container">
-<pre class="src src-emacs-lisp">(<span style="color: #c48702; font-weight: bold;">defun</span> <span style="color: #3dbbb0;">org-babel-execute:org</span> (body params)
-  <span style="color: #5f9f6f; font-style: italic;">"Execute a block of Org code with org-babel.</span>
+          <div class="org-src-container">
+            <pre class="src src-emacs-lisp">(<span style="color: #c48702; font-weight: bold;">defun</span> <span style="color: #3dbbb0;">org-babel-execute:org</span> (body params)
+  <span style="color: #5f9f6f; font-style: italic;">&quot;Execute a block of Org code with org-babel.</span>
 <span style="color: #5f9f6f; font-style: italic;">  BODY is the src code body.</span>
-<span style="color: #5f9f6f; font-style: italic;">  PARAMS isn't used."</span>
+<span style="color: #5f9f6f; font-style: italic;">  PARAMS isn't used.&quot;</span>
   body)
 </pre>
-</div>
-</div>
-</div>
-</div>
-<div id="postamble" class="status">
-Last update: 03 Mar 2025
-</div>
-</body>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

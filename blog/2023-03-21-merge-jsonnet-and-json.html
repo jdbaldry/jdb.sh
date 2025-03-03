@@ -1,29 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<!-- 2025-03-03 Mon 11:25 -->
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Merge Jsonnet and JSON</title>
-<meta name="author" content="Jack Baldry" />
-<meta name="generator" content="Org Mode" />
-<link rel="stylesheet" type="text/css" href="../stylesheet.css" />
-</head>
-<body>
-<div id="content" class="content">
-<header>
-<h1 class="title">Merge Jsonnet and JSON</h1>
-</header><nav id="table-of-contents" role="doc-toc">
-<h2>Table of contents</h2>
+<!DOCTYPE html><html><head><link rel="stylesheet" type="text/css" href="../stylesheet.css" /><meta charset="utf-8" /><meta title="Merge Jsonnet and JSON" /><meta author="Jack Baldry" /><meta generator="Org" /></head><body><div id="content" class="content"><header><h1 class="title">Merge Jsonnet and JSON</h1></header><nav id="table-of-contents" role="doc-toc"><h2>Table of contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
-<ul>
-<li><a href="#orga7f4d5d">1. Problem with binary <code>+</code> operator</a></li>
+<ul><li><a href="#orga7f4d5d">1. Problem with binary <code>+</code> operator</a></li>
 <li><a href="#orged976b6">2. Problem with <code>std.mergePatch</code></a></li>
 <li><a href="#orga575186">3. Defining <code>mergePatchAll</code></a></li>
-</ul>
-</div>
-</nav>
-<div id="outline-container-orga7f4d5d" class="outline-2">
+</ul></div>
+</nav><div id="outline-container-orga7f4d5d" class="outline-2">
 <h2 id="orga7f4d5d"><span class="section-number-2">1.</span> Problem with binary <code>+</code> operator</h2>
 <div class="outline-text-2" id="text-1">
 <p>
@@ -36,7 +17,7 @@ For example, evaluating the following Jsonnet:
 
 <div class="org-src-container">
 <pre class="src src-jsonnet" id="org5d94c14"><span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">jsonnet</span> = { a: { b: <span style="color: #64aa0f;">2</span>, z: <span style="color: #64aa0f;">26</span> } };
-<span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">json</span> = <span style="color: #3dbbb0;">std.parseJson</span>(<span style="color: #f06a3f;">'{ "a": { "c": 3 } }'</span>);
+<span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">json</span> = <span style="color: #3dbbb0;">std.parseJson</span>(<span style="color: #f06a3f;">'{ &quot;a&quot;: { &quot;c&quot;: 3 } }'</span>);
 
 jsonnet + json
 </pre>
@@ -48,8 +29,8 @@ Produces the JSON:
 
 <div class="org-src-container">
 <pre class="src src-json">{
-   "a": {
-      "c": 3
+   &quot;a&quot;: {
+      &quot;c&quot;: 3
    }
 }
 </pre>
@@ -69,7 +50,7 @@ For example, evaluating the following Jsonnet:
 
 <div class="org-src-container">
 <pre class="src src-jsonnet" id="orge838e97"><span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">jsonnet</span> = { visible: <span style="color: #64aa0f;">true</span>, hidden:: <span style="color: #64aa0f;">true</span> };
-<span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">json</span> = <span style="color: #3dbbb0;">std.parseJson</span>(<span style="color: #f06a3f;">'{ "additional": true }'</span>);
+<span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">json</span> = <span style="color: #3dbbb0;">std.parseJson</span>(<span style="color: #f06a3f;">'{ &quot;additional&quot;: true }'</span>);
 
 <span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">merged</span> = <span style="color: #3dbbb0;">std.mergePatch</span>(jsonnet, json);
 
@@ -82,15 +63,15 @@ For example, evaluating the following Jsonnet:
 </div>
 
 <p>
-Produces the JSON (note the absent "hidden" field):
+Produces the JSON (note the absent &quot;hidden&quot; field):
 </p>
 
 <div class="org-src-container">
 <pre class="src src-json">{
-   "hidden_fields": [ ],
-   "visible_fields": [
-      "additional",
-      "visible"
+   &quot;hidden_fields&quot;: [ ],
+   &quot;visible_fields&quot;: [
+      &quot;additional&quot;,
+      &quot;visible&quot;
    ]
 }
 </pre>
@@ -150,7 +131,7 @@ For example, evaluating the following Jsonnet:
 <div class="org-src-container">
 <pre class="src src-jsonnet" id="orgeb3c30d">&lt;&lt;mergePatchAll&gt;&gt;
 <span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">jsonnet</span> = { visible: <span style="color: #64aa0f;">true</span>, hidden:: <span style="color: #64aa0f;">true</span> };
-<span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">json</span> = <span style="color: #3dbbb0;">std.parseJson</span>(<span style="color: #f06a3f;">'{ "additional": true }'</span>);
+<span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">json</span> = <span style="color: #3dbbb0;">std.parseJson</span>(<span style="color: #f06a3f;">'{ &quot;additional&quot;: true }'</span>);
 
 <span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">merged</span> = mergePatchAll(jsonnet, json);
 
@@ -168,21 +149,15 @@ Produces the JSON:
 
 <div class="org-src-container">
 <pre class="src src-json">{
-   "hidden_fields": [
-      "hidden"
+   &quot;hidden_fields&quot;: [
+      &quot;hidden&quot;
    ],
-   "visible_fields": [
-      "additional",
-      "visible"
+   &quot;visible_fields&quot;: [
+      &quot;additional&quot;,
+      &quot;visible&quot;
    ]
 }
 </pre>
 </div>
 </div>
-</div>
-</div>
-<div id="postamble" class="status">
-Last update: 03 Mar 2025
-</div>
-</body>
-</html>
+</div></div></body></html>

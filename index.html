@@ -1,21 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<!-- 2025-03-03 Mon 11:25 -->
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>jdb.sh</title>
-<meta name="author" content="Jack Baldry" />
-<meta name="generator" content="Org Mode" />
-<link rel="stylesheet" type="text/css" href="reset.css" />
-<link rel="stylesheet" type="text/css" href="stylesheet.css" />
-</head>
-<body>
-<div id="content" class="content">
-<header>
-<h1 class="title">jdb.sh</h1>
-</header><div class="org-src-container">
-<pre class="src src-sh"><span style="color: #cf9f7f; font-style: italic;">#</span><span style="color: #cf9f7f; font-style: italic;">!/bin/</span><span style="color: #c48702; font-weight: bold;">sh</span>
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="reset.css" />
+    <link rel="stylesheet" type="text/css" href="stylesheet.css" />
+    <meta charset="utf-8" />
+    <meta title="jdb.sh" />
+    <meta author="Jack Baldry" />
+    <meta generator="Org" />
+  </head>
+  <body>
+    <div id="content" class="content">
+      <header><h1 class="title">jdb.sh</h1></header>
+      <div class="org-src-container">
+        <pre class="src src-sh"><span style="color: #cf9f7f; font-style: italic;">#</span><span style="color: #cf9f7f; font-style: italic;">!/bin/</span><span style="color: #c48702; font-weight: bold;">sh</span>
 
 <span style="color: #ff7a7f; font-weight: bold;">set</span> -e
 <span style="color: #ff7a7f; font-weight: bold;">set</span> -f
@@ -33,15 +30,15 @@
 <span style="color: #5f9f6f; font-style: italic;">EOF</span>
 }
 
-<span style="color: #c48702; font-weight: bold;">if</span> [ <span style="color: #f06a3f;">"$#"</span> -ne 0 ]; <span style="color: #c48702; font-weight: bold;">then</span>
-  <span style="color: #c48702; font-weight: bold;">case</span> <span style="color: #f06a3f;">"$1"</span><span style="color: #c48702; font-weight: bold;"> in</span>
+<span style="color: #c48702; font-weight: bold;">if</span> [ <span style="color: #f06a3f;">&quot;$#&quot;</span> -ne 0 ]; <span style="color: #c48702; font-weight: bold;">then</span>
+  <span style="color: #c48702; font-weight: bold;">case</span> <span style="color: #f06a3f;">&quot;$1&quot;</span><span style="color: #c48702; font-weight: bold;"> in</span>
     -h|--help)
       usage
 
       <span style="color: #c48702; font-weight: bold;">exit</span> 0
       ;;
     *)
-      <span style="color: #ff7a7f; font-weight: bold;">printf</span> <span style="color: #f06a3f;">"Unknown option: %s\n"</span> <span style="color: #f06a3f;">"$1"</span> &gt;&amp;2
+      <span style="color: #ff7a7f; font-weight: bold;">printf</span> <span style="color: #f06a3f;">&quot;Unknown option: %s\n&quot;</span> <span style="color: #f06a3f;">&quot;$1&quot;</span> &gt;&amp;2
       usage
 
       <span style="color: #c48702; font-weight: bold;">exit</span> 1
@@ -55,27 +52,20 @@
 ls -1 ./**/*.html ./*.html | sort
 <span style="color: #ff7a7f; font-weight: bold;">set</span> -f
 </pre>
-</div>
+      </div>
 
-<ul>
-<li><a href="./about.html">./about.html</a></li>
-<li><a href="./blog/2023-03-21-merge-jsonnet-and-json.html">./blog/2023-03-21-merge-jsonnet-and-json.html</a></li>
-<li><a href="./blog/2023-03-26-indy-open-2023-results.html">./blog/2023-03-26-indy-open-2023-results.html</a></li>
-<li><a href="./blog/2023-03-30-convert-bash-to-posix-shell.html">./blog/2023-03-30-convert-bash-to-posix-shell.html</a></li>
-<li><a href="./blog/2023-03-30-review-go-code.html">./blog/2023-03-30-review-go-code.html</a></li>
-<li><a href="./blog/2023-03-31-replace-specific-markdown-blockquotes-with-hugo-shortcodes.html">./blog/2023-03-31-replace-specific-markdown-blockquotes-with-hugo-shortcodes.html</a></li>
-<li><a href="./blog/index.html">./blog/index.html</a></li>
-<li><a href="./literate.html">./literate.html</a></li>
-<li><a href="./stylesheet.html">./stylesheet.html</a></li>
-</ul>
-
-<p>
-The preceding script was written with literate programming.
-For more information, refer to <a href="./about.html">About</a>.
-</p>
-</div>
-<div id="postamble" class="status">
-Last update: 03 Mar 2025
-</div>
-</body>
+      <ul>
+        <li><a href="./about.html">./about.html</a></li>
+        <li><a href="./blog/2023-03-21-merge-jsonnet-and-json.html">./blog/2023-03-21-merge-jsonnet-and-json.html</a></li>
+        <li><a href="./blog/2023-03-26-indy-open-2023-results.html">./blog/2023-03-26-indy-open-2023-results.html</a></li>
+        <li><a href="./blog/2023-03-30-convert-bash-to-posix-shell.html">./blog/2023-03-30-convert-bash-to-posix-shell.html</a></li>
+        <li><a href="./blog/2023-03-30-review-go-code.html">./blog/2023-03-30-review-go-code.html</a></li>
+        <li><a href="./blog/2023-03-31-replace-specific-markdown-blockquotes-with-hugo-shortcodes.html">./blog/2023-03-31-replace-specific-markdown-blockquotes-with-hugo-shortcodes.html</a></li>
+        <li><a href="./blog/index.html">./blog/index.html</a></li>
+        <li><a href="./literate.html">./literate.html</a></li>
+        <li><a href="./stylesheet.html">./stylesheet.html</a></li>
+      </ul>
+      <p>The preceding script was written with literate programming. For more information, refer to <a href="./about.html">About</a>.</p>
+    </div>
+  </body>
 </html>

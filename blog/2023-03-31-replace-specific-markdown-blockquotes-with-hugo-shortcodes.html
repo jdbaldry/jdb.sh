@@ -1,31 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<!-- 2025-03-03 Mon 11:25 -->
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Replace specific Markdown blockquotes with Hugo shortcodes</title>
-<meta name="author" content="Jack Baldry" />
-<meta name="generator" content="Org Mode" />
-<style>code {font-weight: bold}</style>
-<style>.example {background-color: #111111; color: #ffffff}</style>
-<style>.src {background-color: #111111; color: #ffffff}</style>
-<style>.note {margin: 1.2em; border-left: 3px solid; padding: 6px 12px 6px 24px}</style>
-</head>
-<body>
-<div id="content" class="content">
-<header>
-<h1 class="title">Replace specific Markdown blockquotes with Hugo shortcodes</h1>
-</header><nav id="table-of-contents" role="doc-toc">
-<h2>Table of contents</h2>
+<!DOCTYPE html><html><head><style>code {font-weight: bold}</style><style>.example {background-color: #111111; color: #ffffff}</style><style>.src {background-color: #111111; color: #ffffff}</style><style>.note {margin: 1.2em; border-left: 3px solid; padding: 6px 12px 6px 24px}</style><meta charset="utf-8" /><meta title="Replace specific Markdown blockquotes with Hugo shortcodes" /><meta author="Jack Baldry" /><meta generator="Org" /></head><body><div id="content" class="content"><header><h1 class="title">Replace specific Markdown blockquotes with Hugo shortcodes</h1></header><nav id="table-of-contents" role="doc-toc"><h2>Table of contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
-<ul>
-<li><a href="#org52f336b">1. Problem</a></li>
+<ul><li><a href="#org52f336b">1. Problem</a></li>
 <li><a href="#org2d1e8f4">2. Solution with GNU sed</a></li>
-</ul>
-</div>
-</nav>
-<div id="outline-container-org52f336b" class="outline-2">
+</ul></div>
+</nav><div id="outline-container-org52f336b" class="outline-2">
 <h2 id="org52f336b"><span class="section-number-2">1.</span> Problem</h2>
 <div class="outline-text-2" id="text-1">
 <p>
@@ -65,7 +43,7 @@ The Hugo shortcode looks like:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-markdown">{{% admonition type="note" %}}
+<pre class="src src-markdown">{{% admonition type=&quot;note&quot; %}}
 Single line note
 {{% /admonition %}}
 </pre>
@@ -98,7 +76,7 @@ Match the start of blockquote admonitions allowing for a colon inside or outside
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash" id="orgfa235ba"><span style="color: #6fafff;">MARKER</span>=<span style="color: #f06a3f;">"${BLOCKQUOTE}\*\*(${TYPES}):?\*\*:?"</span>
+<pre class="src src-bash" id="orgfa235ba"><span style="color: #6fafff;">MARKER</span>=<span style="color: #f06a3f;">&quot;${BLOCKQUOTE}\*\*(${TYPES}):?\*\*:?&quot;</span>
 </pre>
 </div>
 
@@ -116,7 +94,7 @@ Match the opening and closing tags for an admonition.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash" id="org547b72f"><span style="color: #6fafff;">ADMON_OPEN</span>=<span style="color: #f06a3f;">"\{\{% admonition type=\"[\(${TYPES}\)]+\" %\}\}"</span>
+<pre class="src src-bash" id="org547b72f"><span style="color: #6fafff;">ADMON_OPEN</span>=<span style="color: #f06a3f;">&quot;\{\{% admonition type=\&quot;[\(${TYPES}\)]+\&quot; %\}\}&quot;</span>
 <span style="color: #6fafff;">ADMON_CLOSE</span>=<span style="color: #f06a3f;">'\{\{% \/admonition %\}\}'</span>
 </pre>
 </div>
@@ -127,7 +105,7 @@ It matches a the admonition marker, capturing the type in the first capture grou
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash" id="orgda8a0a1"><span style="color: #6fafff;">BLOCKQUOTE_ADMON</span>=<span style="color: #f06a3f;">"${MARKER} ?(${REST_OF_LINE})((${REST_OF_LINE})?+)\n"</span>
+<pre class="src src-bash" id="orgda8a0a1"><span style="color: #6fafff;">BLOCKQUOTE_ADMON</span>=<span style="color: #f06a3f;">&quot;${MARKER} ?(${REST_OF_LINE})((${REST_OF_LINE})?+)\n&quot;</span>
 </pre>
 </div>
 
@@ -137,7 +115,7 @@ The <code>\L</code> and <code>\E</code> transform the type to lowercase.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash" id="orga42dd6e"><span style="color: #6fafff;">SHORTCODE_ADMON</span>=<span style="color: #f06a3f;">'{{% admonition type="\L\1\E" %}}\n\2\3{{% \/admonition %}}\n\n'</span>
+<pre class="src src-bash" id="orga42dd6e"><span style="color: #6fafff;">SHORTCODE_ADMON</span>=<span style="color: #f06a3f;">'{{% admonition type=&quot;\L\1\E&quot; %}}\n\2\3{{% \/admonition %}}\n\n'</span>
 </pre>
 </div>
 
@@ -150,12 +128,12 @@ Wrapping it all up in a script.
 
 <span style="color: #6fafff;">TYPES</span>=<span style="color: #f06a3f;">'[Nn]ote|[Aa]lert|[Ww]arn'</span>
 <span style="color: #6fafff;">BLOCKQUOTE</span>=<span style="color: #f06a3f;">'&gt; '</span>
-<span style="color: #6fafff;">MARKER</span>=<span style="color: #f06a3f;">"${BLOCKQUOTE}\*\*(${TYPES}):?\*\*:?"</span>
+<span style="color: #6fafff;">MARKER</span>=<span style="color: #f06a3f;">&quot;${BLOCKQUOTE}\*\*(${TYPES}):?\*\*:?&quot;</span>
 <span style="color: #6fafff;">REST_OF_LINE</span>=<span style="color: #f06a3f;">'[^\n]+\n'</span>
-<span style="color: #6fafff;">ADMON_OPEN</span>=<span style="color: #f06a3f;">"\{\{% admonition type=\"[\(${TYPES}\)]+\" %\}\}"</span>
+<span style="color: #6fafff;">ADMON_OPEN</span>=<span style="color: #f06a3f;">&quot;\{\{% admonition type=\&quot;[\(${TYPES}\)]+\&quot; %\}\}&quot;</span>
 <span style="color: #6fafff;">ADMON_CLOSE</span>=<span style="color: #f06a3f;">'\{\{% \/admonition %\}\}'</span>
-<span style="color: #6fafff;">BLOCKQUOTE_ADMON</span>=<span style="color: #f06a3f;">"${MARKER} ?(${REST_OF_LINE})((${REST_OF_LINE})?+)\n"</span>
-<span style="color: #6fafff;">SHORTCODE_ADMON</span>=<span style="color: #f06a3f;">'{{% admonition type="\L\1\E" %}}\n\2\3{{% \/admonition %}}\n\n'</span>
+<span style="color: #6fafff;">BLOCKQUOTE_ADMON</span>=<span style="color: #f06a3f;">&quot;${MARKER} ?(${REST_OF_LINE})((${REST_OF_LINE})?+)\n&quot;</span>
+<span style="color: #6fafff;">SHORTCODE_ADMON</span>=<span style="color: #f06a3f;">'{{% admonition type=&quot;\L\1\E&quot; %}}\n\2\3{{% \/admonition %}}\n\n'</span>
 
 sed -Ez -f - test.md &lt;&lt;EOF
 <span style="color: #5f9f6f; font-style: italic;">s/${BLOCKQUOTE_ADMON}/${SHORTCODE_ADMON}/g</span>
@@ -173,10 +151,4 @@ Produces the following output Markdown:
 </pre>
 </div>
 </div>
-</div>
-</div>
-<div id="postamble" class="status">
-Last update: 03 Mar 2025
-</div>
-</body>
-</html>
+</div></div></body></html>
