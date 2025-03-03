@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="jdb">
+<head>
+<!-- 2025-03-03 Mon 10:58 -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Style the documents</title>
+<meta name="author" content="Jack Baldry" />
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="reset.css" />
+<link rel="stylesheet" type="text/css" href="stylesheet.css" />
+</head>
+<body>
+<div id="content" class="content">
+<header>
+<h1 class="title">Style the documents</h1>
+</header><nav id="table-of-contents" role="doc-toc">
+<h2>Table of contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org1ddc0f0">1. Remove default style</a></li>
+<li><a href="#orgf130927">2. Use a CSS reset</a>
+<ul>
+<li>
+<ul>
+<li><a href="#orgecefd39">2.0.1. Use a more intuitive box-sizing model</a></li>
+<li><a href="#org9b82d71">2.0.2. Add accessible line height</a></li>
+<li><a href="#org81ab0fd">2.0.3. Improve text rendering</a></li>
+<li><a href="#orga6b1bcf">2.0.4. Improve media defaults</a></li>
+<li><a href="#orga9c51ff">2.0.5. Inherit fonts for form controls</a></li>
+<li><a href="#org3a8a479">2.0.6. Avoid text overflows</a></li>
+<li><a href="#org0971510">2.0.7. Improve line wrapping</a></li>
+<li><a href="#org333db6f">2.0.8. Create a root static context</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgcff4542">3. Define a custom stylesheet</a>
+<ul>
+<li><a href="#org4b822f3">3.1. Set global variables</a>
+<ul>
+<li><a href="#orgd3751d4">3.1.1. Color</a></li>
+<li><a href="#orgef604a6">3.1.2. Font family</a></li>
+<li><a href="#org8a4de6a">3.1.3. Border</a></li>
+</ul>
+</li>
+<li><a href="#org562f09e">3.2. Set code styling to match my editor</a></li>
+<li><a href="#orgc8c6d43">3.3. Set body</a></li>
+<li><a href="#orgf3a2c6e">3.4. Set links</a></li>
+<li><a href="#orgabec747">3.5. Set headings</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id="outline-container-org1ddc0f0" class="outline-2">
+<h2 id="org1ddc0f0"><span class="section-number-2">1.</span> Remove default style</h2>
+<div class="outline-text-2" id="text-1">
+<div class="org-src-container">
+<pre class="src src-org"><span style="color: #887c8a;">options: html-style:nil</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgf130927" class="outline-2">
+<h2 id="orgf130927"><span class="section-number-2">2.</span> Use a CSS reset</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Org tangles all the following sections into <a href="./reset.css">reset.css</a>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-org"><span style="color: #887c8a;">html_head: &lt;link rel="stylesheet" type="text/css" href="reset.css" /&gt;</span>
+</pre>
+</div>
+<blockquote>
+<p>
+Historically the main goal of a CSS reset was to ensure consistency between browsers. But in recent times the differences have drastically decreased and we might want to keep some styling like font-style: italic for &lt;em&gt; elements.
+</p>
+</blockquote>
+
+<p>
+From <a href="https://webdev.bryanhogan.com/css/css-reset/">CSS Reset</a> and <a href="https://www.joshwcomeau.com/css/custom-css-reset/">A Modern CSS Reset</a>.
+</p>
+</div>
+<div id="outline-container-orgecefd39" class="outline-4">
+<h4 id="orgecefd39"><span class="section-number-4">2.0.1.</span> Use a more intuitive box-sizing model</h4>
+<div class="outline-text-4" id="text-2-0-1">
+<div class="org-src-container">
+<pre class="src src-css"><span style="color: #3dbbb0;">*,</span>
+<span style="color: #3dbbb0;">*::after,</span>
+<span style="color: #3dbbb0;">*::before</span> {
+    <span style="color: #c48702; font-weight: bold;">box-sizing</span>: border-box;
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org9b82d71" class="outline-4">
+<h4 id="org9b82d71"><span class="section-number-4">2.0.2.</span> Add accessible line height</h4>
+<div class="outline-text-4" id="text-2-0-2">
+<div class="org-src-container">
+<pre class="src src-css" id="org87e107a"><span style="color: #3dbbb0;">body</span> {
+    <span style="color: #c48702; font-weight: bold;">line-height</span>: 1.5;
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org81ab0fd" class="outline-4">
+<h4 id="org81ab0fd"><span class="section-number-4">2.0.3.</span> Improve text rendering</h4>
+<div class="outline-text-4" id="text-2-0-3">
+<div class="org-src-container">
+<pre class="src src-css" id="orgd117f90"><span style="color: #3dbbb0;">body</span> {
+    <span style="color: #c48702; font-weight: bold; font-style: italic;">-webkit-font-smoothing</span>: antialiased;
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orga6b1bcf" class="outline-4">
+<h4 id="orga6b1bcf"><span class="section-number-4">2.0.4.</span> Improve media defaults</h4>
+<div class="outline-text-4" id="text-2-0-4">
+<div class="org-src-container">
+<pre class="src src-css"><span style="color: #3dbbb0;">canvas, img, picture, svg, video</span> {
+    <span style="color: #c48702; font-weight: bold;">display</span>: block;
+    <span style="color: #c48702; font-weight: bold;">max-width</span>: 100%;
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orga9c51ff" class="outline-4">
+<h4 id="orga9c51ff"><span class="section-number-4">2.0.5.</span> Inherit fonts for form controls</h4>
+<div class="outline-text-4" id="text-2-0-5">
+<div class="org-src-container">
+<pre class="src src-css"><span style="color: #3dbbb0;">button, input, select, textarea</span> {
+    <span style="color: #c48702; font-weight: bold;">font</span>: inherit;
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org3a8a479" class="outline-4">
+<h4 id="org3a8a479"><span class="section-number-4">2.0.6.</span> Avoid text overflows</h4>
+<div class="outline-text-4" id="text-2-0-6">
+<div class="org-src-container">
+<pre class="src src-css"><span style="color: #3dbbb0;">h1, h2, h3, h4, h5, h6, p</span> {
+    <span style="color: #c48702; font-weight: bold;">overflow-wrap</span>: break-word;
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org0971510" class="outline-4">
+<h4 id="org0971510"><span class="section-number-4">2.0.7.</span> Improve line wrapping</h4>
+<div class="outline-text-4" id="text-2-0-7">
+<div class="org-src-container">
+<pre class="src src-css"><span style="color: #3dbbb0;">p</span> {
+    <span style="color: #c48702; font-weight: bold;">text-wrap</span>: pretty;
+}
+<span style="color: #3dbbb0;">h1, h2, h3, h4, h5, h6</span> {
+    <span style="color: #c48702; font-weight: bold;">text-wrap</span>: balance;
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org333db6f" class="outline-4">
+<h4 id="org333db6f"><span class="section-number-4">2.0.8.</span> Create a root static context</h4>
+<div class="outline-text-4" id="text-2-0-8">
+<div class="org-src-container">
+<pre class="src src-css"><span style="color: #3dbbb0;">#__next, #root</span> {
+    <span style="color: #c48702; font-weight: bold;">isolation</span>: isolate;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orgcff4542" class="outline-2">
+<h2 id="orgcff4542"><span class="section-number-2">3.</span> Define a custom stylesheet</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Uses the <code>html_head</code> metadata to set the stylesheet.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-org"><span style="color: #887c8a;">html_head: &lt;link rel="stylesheet" type="text/css" href="stylesheet.css" /&gt;</span>
+</pre>
+</div>
+<p>
+Tangle the stylesheet as <code>stylesheet.css</code>.
+</p>
+<div class="org-src-container">
+<pre class="src src-css" id="org65ab51e">&lt;&lt;variables&gt;&gt;
+
+&lt;&lt;body&gt;&gt;
+&lt;&lt;code&gt;&gt;
+&lt;&lt;headings&gt;&gt;
+&lt;&lt;links&gt;&gt;
+</pre>
+</div>
+</div>
+<div id="outline-container-org4b822f3" class="outline-3">
+<h3 id="org4b822f3"><span class="section-number-3">3.1.</span> Set global variables</h3>
+<div class="outline-text-3" id="text-3-1">
+<div class="org-src-container">
+<pre class="src src-css" id="org9acf0a4"><span style="color: #3dbbb0;">:root</span> {
+  &lt;&lt;border&gt;&gt;
+  &lt;&lt;color&gt;&gt;
+  &lt;&lt;font-family&gt;&gt;
+}
+</pre>
+</div>
+</div>
+<div id="outline-container-orgd3751d4" class="outline-4">
+<h4 id="orgd3751d4"><span class="section-number-4">3.1.1.</span> Color</h4>
+<div class="outline-text-4" id="text-3-1-1">
+<div class="org-src-container">
+<pre class="src src-css" id="org383cbe1"><span style="color: #6fafff;">--color</span>: <span style="color: #000000; background-color: #cfbcba;">#cfbcba</span>;
+<span style="color: #6fafff;">--color-background</span>: <span style="color: #ffffff; background-color: #0f0e06;">#0f0e06</span>;
+
+<span style="color: #6fafff;">--color-doc</span>: <span style="color: #ffffff; background-color: #5f9f6f;">#5f9f6f</span>;
+<span style="color: #6fafff;">--color-function</span>: <span style="color: #000000; background-color: #3dbbb0;">#3dbbb0</span>;
+<span style="color: #6fafff;">--color-link</span>:  <span style="color: #ffffff; background-color: #c48702;">#c48702</span>;
+<span style="color: #6fafff;">--color-string</span>: <span style="color: #ffffff; background-color: #f06a3f;">#f06a3f</span>;
+<span style="color: #6fafff;">--color-variable</span>: <span style="color: #000000; background-color: #6fafff;">#6fafff</span>;
+
+<span style="color: #6fafff;">--color-org-1</span>: <span style="color: #ffffff; background-color: #64aa0f;">#64aa0f</span>;
+<span style="color: #6fafff;">--color-org-2</span>: <span style="color: #ffffff; background-color: #ef656a;">#ef656a</span>;
+<span style="color: #6fafff;">--color-org-3</span>: <span style="color: #000000; background-color: #3dbbb0;">#3dbbb0</span>;
+<span style="color: #6fafff;">--color-org-4</span>: <span style="color: #000000; background-color: #df8f6f;">#df8f6f</span>;
+<span style="color: #6fafff;">--color-org-meta</span>: <span style="color: #ffffff; background-color: #887c8a;">#887c8a</span>;
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgef604a6" class="outline-4">
+<h4 id="orgef604a6"><span class="section-number-4">3.1.2.</span> Font family</h4>
+<div class="outline-text-4" id="text-3-1-2">
+<div class="org-src-container">
+<pre class="src src-css" id="org0a85b08"><span style="color: #6fafff;">--font-mono</span>: ui-monospace, <span style="color: #f06a3f;">"Menlo"</span>, monospace;
+<span style="color: #6fafff;">--font-family</span>: var(<span style="color: #6fafff;">--font-mono</span>);
+
+<span style="color: #6fafff;">--font-size-small</span>: 0.875rem;
+<span style="color: #6fafff;">--font-size-base</span>: 16px;
+<span style="color: #6fafff;">--font-size-large</span>: 1.25rem;
+
+<span style="color: #6fafff;">--text-size-6xl</span>: 2.75rem;
+<span style="color: #6fafff;">--text-size-5xl</span>: 2.25rem; <span style="color: #cf9f7f; font-style: italic;">/* </span><span style="color: #cf9f7f; font-style: italic;">Desktop h1</span><span style="color: #cf9f7f; font-style: italic;"> */</span>
+<span style="color: #6fafff;">--text-size-4xl</span>: 1.75rem; <span style="color: #cf9f7f; font-style: italic;">/* </span><span style="color: #cf9f7f; font-style: italic;">Mobile h1, desktop h2</span><span style="color: #cf9f7f; font-style: italic;"> */</span>
+<span style="color: #6fafff;">--text-size-3xl</span>: 1.5rem; <span style="color: #cf9f7f; font-style: italic;">/* </span><span style="color: #cf9f7f; font-style: italic;">Mobile h2</span><span style="color: #cf9f7f; font-style: italic;"> */</span>
+<span style="color: #6fafff;">--text-size-2xl</span>: 1.25rem;
+<span style="color: #6fafff;">--text-size-xl</span>: 1.125rem;
+
+<span style="color: #6fafff;">--font-weight-light</span>: 300;
+<span style="color: #6fafff;">--font-weight-regular</span>: 400;
+<span style="color: #6fafff;">--font-weight-semi-bold</span>: 600;
+<span style="color: #6fafff;">--font-weight-bold</span>: 700;
+
+<span style="color: #6fafff;">--font-line-height</span>: 1.5;
+<span style="color: #6fafff;">--font-line-height-heading</span>: 1.2;
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org8a4de6a" class="outline-4">
+<h4 id="org8a4de6a"><span class="section-number-4">3.1.3.</span> Border</h4>
+<div class="outline-text-4" id="text-3-1-3">
+<div class="org-src-container">
+<pre class="src src-css" id="org08aed6a"><span style="color: #6fafff;">--border-radius-s</span>: 4px;
+<span style="color: #6fafff;">--border-radius-m</span>: 8px;
+<span style="color: #6fafff;">--border-radius-l</span>: 16px;
+
+<span style="color: #6fafff;">--border-width-s</span>: 1px;
+<span style="color: #6fafff;">--border-width-m</span>: 2px;
+<span style="color: #6fafff;">--border-width-l</span>: 4px;
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org562f09e" class="outline-3">
+<h3 id="org562f09e"><span class="section-number-3">3.2.</span> Set code styling to match my editor</h3>
+<div class="outline-text-3" id="text-3-2">
+<div class="org-src-container">
+<pre class="src src-css" id="org3d419bb"><span style="color: #3dbbb0;">code</span> {
+    <span style="color: #c48702; font-weight: bold;">font-weight</span>: bold;
+}
+
+<span style="color: #3dbbb0;">.src</span> {
+    <span style="color: #c48702; font-weight: bold;">border</span>: 1px solid var(<span style="color: #6fafff;">--color</span>);
+    <span style="color: #c48702; font-weight: bold;">background-color</span>: var(<span style="color: #6fafff;">--color-background</span>);
+    <span style="color: #c48702; font-weight: bold;">color</span>: var(<span style="color: #6fafff;">--color</span>);
+    <span style="color: #c48702; font-weight: bold;">padding</span>: var(<span style="color: #6fafff;">--border-radius-m</span>);
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgc8c6d43" class="outline-3">
+<h3 id="orgc8c6d43"><span class="section-number-3">3.3.</span> Set body</h3>
+<div class="outline-text-3" id="text-3-3">
+<div class="org-src-container">
+<pre class="src src-css" id="org2921238"><span style="color: #3dbbb0;">body</span> {
+  <span style="color: #c48702; font-weight: bold;">background-color</span>: var(<span style="color: #6fafff;">--color-background</span>);
+  <span style="color: #c48702; font-weight: bold;">color</span>: var(<span style="color: #6fafff;">--color</span>);
+  <span style="color: #c48702; font-weight: bold;">font-family</span>: var(<span style="color: #6fafff;">--font-family</span>);
+  <span style="color: #c48702; font-weight: bold;">font-size</span>: var(<span style="color: #6fafff;">--font-size-base</span>);
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgf3a2c6e" class="outline-3">
+<h3 id="orgf3a2c6e"><span class="section-number-3">3.4.</span> Set links</h3>
+<div class="outline-text-3" id="text-3-4">
+<div class="org-src-container">
+<pre class="src src-css" id="orgccd587b"><span style="color: #3dbbb0;">a</span> {
+  <span style="color: #c48702; font-weight: bold;">color</span>: var(<span style="color: #6fafff;">--color-link</span>);
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgabec747" class="outline-3">
+<h3 id="orgabec747"><span class="section-number-3">3.5.</span> Set headings</h3>
+<div class="outline-text-3" id="text-3-5">
+<div class="org-src-container">
+<pre class="src src-css" id="orgcd3e211"><span style="color: #3dbbb0;">h1</span> {
+  <span style="color: #c48702; font-weight: bold;">color</span>: var(<span style="color: #6fafff;">--color-org-1</span>);
+  <span style="color: #c48702; font-weight: bold;">font-size</span>: var(<span style="color: #6fafff;">--text-size-4xl</span>);
+}
+<span style="color: #3dbbb0;">h2</span> {
+  <span style="color: #c48702; font-weight: bold;">color</span>: var(<span style="color: #6fafff;">--color-org-2</span>);
+  <span style="color: #c48702; font-weight: bold;">font-size</span>: var(<span style="color: #6fafff;">--text-size-3xl</span>);
+}
+<span style="color: #3dbbb0;">h3</span> {
+  <span style="color: #c48702; font-weight: bold;">color</span>: var(<span style="color: #6fafff;">--color-org-3</span>);
+  <span style="color: #c48702; font-weight: bold;">font-size</span>: var(<span style="color: #6fafff;">--text-size-2xl</span>);
+}
+<span style="color: #3dbbb0;">h4</span> {
+  <span style="color: #c48702; font-weight: bold;">color</span>: var(<span style="color: #6fafff;">--color-org-4</span>);
+  <span style="color: #c48702; font-weight: bold;">font-size</span>: var(<span style="color: #6fafff;">--text-size-xl</span>);
+}
+
+<span style="color: #ff7a7f; font-weight: bold;">@media</span> (min-width: 48rem) {
+  <span style="color: #3dbbb0;">h1</span> {
+    <span style="color: #c48702; font-weight: bold;">font-size</span>: var(<span style="color: #6fafff;">--text-size-5xl</span>);
+  }
+  <span style="color: #3dbbb0;">h2</span> {
+    <span style="color: #c48702; font-weight: bold;">font-size</span>: var(<span style="color: #6fafff;">--text-size-4xl</span>);
+  }
+  <span style="color: #3dbbb0;">h3</span> {
+    <span style="color: #c48702; font-weight: bold;">font-size</span>: var(<span style="color: #6fafff;">--text-size-3xl</span>);
+  }
+  <span style="color: #3dbbb0;">h4</span> {
+    <span style="color: #c48702; font-weight: bold;">font-size</span>: var(<span style="color: #6fafff;">--text-size-2xl</span>);
+  }
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+Last update : 03 Mar 2025
+</div>
+</body>
+</html>

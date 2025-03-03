@@ -1,0 +1,537 @@
+# -*- lexical-binding: t; -*-
+#+title: Literate homepage
+
+#+author: Jack Baldry
+#+email: mail@jdb.sh
+
+* Work in this file
+:properties:
+:export_file_name: literate.html
+:end:
+
+** Publish
+
+#+begin_src emacs-lisp :noweb yes
+  <<export-to-org>>
+  <<html5>>
+
+  (defun jdb/org-html-postamble (plist)
+    (format "Last update: %s" (format-time-string "%d %b %Y")))
+  (setq org-html-postamble 'jdb/org-html-postamble)
+  (setq org-publish-project-alist
+        '(("blog"
+           :auto-sitemap t
+           :sitemap-filename "index.org"
+           :sitemap-title "Blog"
+
+           :html-head-include-default-style nil
+           :html-head "<link rel=\"stylesheet\" type=\"text/css\" href=\"../reset.css\" />"
+           :html-head "<link rel=\"stylesheet\" type=\"text/css\" href=\"../stylesheet.css\" />"
+           :html-html5-fancy t
+
+           :base-directory "./blog"
+           :publishing-function org-html-publish-to-html
+           :publishing-directory "./blog"
+           :section-numbers t
+           :with-toc t)))
+#+end_src
+**** Work around hardcoded strings
+
+#+begin_src org :results value raw
+#+language: jdb
+#+end_src
+
+#+RESULTS:
+#+language: jdb
+
+#+begin_src emacs-lisp
+  (defconst org-export-dictionary
+    '(("Table of Contents"
+      ("jdb" :html "Table of contents" :utf-8 "Table of contents"))))
+#+end_src
+
+**** Use HTML5
+
+From [[https://orgmode.org/manual/HTML-doctypes.html][HTML Doctypes]].
+
+#+begin_quote
+Org’s HTML exporter does not by default enable new block elements introduced with the HTML5 standard. To enable them, set org-html-html5-fancy to non-nil. Or use an ‘OPTIONS’ line in the file to set ‘html5-fancy’.
+#+end_quote
+
+#+name: html5
+#+begin_src emacs-lisp
+  (setq org-html-doctype "html5")
+  (setq org-html-html5-fancy t)
+#+end_src
+
+**** Define transcode functions
+
+None yet. An example is ~org-html-src-block~.
+**** Define export functions
+
+#+name: export-to-html
+#+begin_src emacs-lisp
+  (defun jdb/export-subtree-to-html ()
+    (org-export-to-file 'html (cdr (assoc "EXPORT_FILE_NAME" (org-entry-properties))) nil t))
+  (defun jdb/export-to-html ()
+    (interactive)
+    (org-babel-tangle)
+    (org-publish "blog")
+    (org-map-entries #'jdb/export-subtree-to-html "EXPORT_FILE_NAME={.+}"))
+#+end_src
+
+** Add a structure
+
+#+begin_src
+C-c C-,
+#+end_src
+** Tangle
+
+#+begin_src
+C-c C-v t
+#+end_src
+** Ensure pretty output
+
+#+begin_src emacs-lisp
+  (add-hook 'org-babel-post-tangle-hook #'whitespace-cleanup)
+#+end_src
+
+** Format buffer
+
+#+begin_src
+C-x h C-M-\ C-u C-SPC C-u C-SPC
+#+end_src
+** Add babel execute for Org src
+
+Have Org src within the Org file.
+
+#+begin_src emacs-lisp
+  (defun org-babel-execute:org (body params)
+    "Execute a block of Org code with org-babel.
+    BODY is the src code body.
+    PARAMS isn't used."
+    body)
+#+end_src
+
+* Style the documents
+:PROPERTIES:
+:EXPORT_FILE_NAME: stylesheet.html
+:END:
+
+** Remove default style
+
+#+begin_src org :results output raw
+#+options: html-style:nil
+#+end_src
+
+#+RESULTS:
+#+options: html-style:nil
+
+** Use a CSS reset
+
+Org tangles all the following sections into [[./reset.css][reset.css]].
+
+#+begin_src org :results output raw
+#+html_head: <link rel="stylesheet" type="text/css" href="reset.css" />
+#+end_src
+
+#+RESULTS:
+#+html_head: <link rel="stylesheet" type="text/css" href="reset.css" />
+
+#+begin_quote
+Historically the main goal of a CSS reset was to ensure consistency between browsers. But in recent times the differences have drastically decreased and we might want to keep some styling like font-style: italic for <em> elements.
+#+end_quote
+
+From [[https://webdev.bryanhogan.com/css/css-reset/][CSS Reset]] and [[https://www.joshwcomeau.com/css/custom-css-reset/][A Modern CSS Reset]].
+**** Use a more intuitive box-sizing model
+
+#+begin_src css :tangle reset.css
+  ,*,
+  ,*::after,
+  ,*::before {
+      box-sizing: border-box;
+  }
+#+end_src
+
+**** Add accessible line height
+
+#+name: line-height
+#+begin_src css
+  body {
+      line-height: 1.5;
+  }
+#+end_src
+
+**** Improve text rendering
+
+#+name: webkit-font-smoothing
+#+begin_src css
+  body {
+      -webkit-font-smoothing: antialiased;
+  }
+#+end_src
+
+**** Improve media defaults
+
+#+begin_src css :tangle reset.css
+  canvas, img, picture, svg, video {
+      display: block;
+      max-width: 100%;
+  }
+#+end_src
+
+**** Inherit fonts for form controls
+
+#+begin_src css :tangle reset.css
+  button, input, select, textarea {
+      font: inherit;
+  }
+#+end_src
+
+**** Avoid text overflows
+
+#+begin_src css :tangle reset.css
+  h1, h2, h3, h4, h5, h6, p {
+      overflow-wrap: break-word;
+  }
+#+end_src
+
+**** Improve line wrapping
+
+#+begin_src css :tangle reset.css
+  p {
+      text-wrap: pretty;
+  }
+  h1, h2, h3, h4, h5, h6 {
+      text-wrap: balance;
+  }
+#+end_src
+
+**** Create a root static context
+
+#+begin_src css :tangle reset.css
+  #__next, #root {
+      isolation: isolate;
+  }
+#+end_src
+
+** Define a custom stylesheet
+
+Uses the ~html_head~ metadata to set the stylesheet.
+
+#+begin_src org :results value raw
+#+html_head: <link rel="stylesheet" type="text/css" href="stylesheet.css" />
+#+end_src
+
+#+RESULTS:
+#+html_head: <link rel="stylesheet" type="text/css" href="stylesheet.css" />
+
+Tangle the stylesheet as ~stylesheet.css~.
+#+name: stylesheet
+#+begin_src css :noweb tangle :tangle stylesheet.css
+  <<variables>>
+
+  <<body>>
+  <<code>>
+  <<headings>>
+  <<links>>
+#+end_src
+*** Set global variables
+
+#+name: variables
+#+begin_src css :noweb no-export
+  :root {
+    <<border>>
+    <<color>>
+    <<font-family>>
+  }
+#+end_src
+
+**** Color
+
+#+name: color
+#+begin_src css
+  --color: #cfbcba;
+  --color-background: #0f0e06;
+
+  --color-doc: #5f9f6f;
+  --color-function: #3dbbb0;
+  --color-link:  #c48702;
+  --color-string: #f06a3f;
+  --color-variable: #6fafff;
+
+  --color-org-1: #64aa0f;
+  --color-org-2: #ef656a;
+  --color-org-3: #3dbbb0;
+  --color-org-4: #df8f6f;
+  --color-org-meta: #887c8a;
+#+end_src
+**** Font family
+
+#+name: font-family
+#+begin_src css
+  --font-mono: ui-monospace, "Menlo", monospace;
+  --font-family: var(--font-mono);
+
+  --font-size-small: 0.875rem;
+  --font-size-base: 16px;
+  --font-size-large: 1.25rem;
+
+  --text-size-6xl: 2.75rem;
+  --text-size-5xl: 2.25rem; /* Desktop h1 */
+  --text-size-4xl: 1.75rem; /* Mobile h1, desktop h2 */
+  --text-size-3xl: 1.5rem; /* Mobile h2 */
+  --text-size-2xl: 1.25rem;
+  --text-size-xl: 1.125rem;
+
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-semi-bold: 600;
+  --font-weight-bold: 700;
+
+  --font-line-height: 1.5;
+  --font-line-height-heading: 1.2;
+#+end_src
+
+**** Border
+
+#+name:border
+#+begin_src css
+  --border-radius-s: 4px;
+  --border-radius-m: 8px;
+  --border-radius-l: 16px;
+
+  --border-width-s: 1px;
+  --border-width-m: 2px;
+  --border-width-l: 4px;
+#+end_src
+
+*** Set code styling to match my editor
+
+#+name: code
+#+begin_src css
+  code {
+      font-weight: bold;
+  }
+
+  .src {
+      border: 1px solid var(--color);
+      background-color: var(--color-background);
+      color: var(--color);
+      padding: var(--border-radius-m);
+  }
+#+end_src
+
+*** Set body
+
+#+name: body
+#+begin_src css
+  body {
+    background-color: var(--color-background);
+    color: var(--color);
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+  }
+#+end_src
+*** Set links
+
+#+name: links
+#+begin_src css
+  a {
+    color: var(--color-link);
+  }
+#+end_src
+*** Set headings
+
+#+name: headings
+#+begin_src css
+  h1 {
+    color: var(--color-org-1);
+    font-size: var(--text-size-4xl);
+  }
+  h2 {
+    color: var(--color-org-2);
+    font-size: var(--text-size-3xl);
+  }
+  h3 {
+    color: var(--color-org-3);
+    font-size: var(--text-size-2xl);
+  }
+  h4 {
+    color: var(--color-org-4);
+    font-size: var(--text-size-xl);
+  }
+
+  @media (min-width: 48rem) {
+    h1 {
+      font-size: var(--text-size-5xl);
+    }
+    h2 {
+      font-size: var(--text-size-4xl);
+    }
+    h3 {
+      font-size: var(--text-size-3xl);
+    }
+    h4 {
+      font-size: var(--text-size-2xl);
+    }
+  }
+#+end_src
+* Create an index page
+:properties:
+:export_file_name: index.html
+:export_title: jdb.sh
+:end:
+
+#+begin_src sh :dir :exports both :noweb yes :results output html :post linkify(data=*this*) :tangle jdb.sh :tangle-mode o700
+  <<shebang>>
+
+  <<errexit>>
+  <<noglob>>
+
+  <<usage>>
+
+  <<argc>>
+
+  <<nounset>>
+
+  <<ls>>
+#+end_src
+
+#+RESULTS:
+#+begin_export html
+<ul>
+<li><a href="./about.html">./about.html</a></li>
+<li><a href="./blog/2023-03-21-merge-jsonnet-and-json.html">./blog/2023-03-21-merge-jsonnet-and-json.html</a></li>
+<li><a href="./blog/2023-03-26-indy-open-2023-results.html">./blog/2023-03-26-indy-open-2023-results.html</a></li>
+<li><a href="./blog/2023-03-30-convert-bash-to-posix-shell.html">./blog/2023-03-30-convert-bash-to-posix-shell.html</a></li>
+<li><a href="./blog/2023-03-30-review-go-code.html">./blog/2023-03-30-review-go-code.html</a></li>
+<li><a href="./blog/2023-03-31-replace-specific-markdown-blockquotes-with-hugo-shortcodes.html">./blog/2023-03-31-replace-specific-markdown-blockquotes-with-hugo-shortcodes.html</a></li>
+<li><a href="./blog/index.html">./blog/index.html</a></li>
+<li><a href="./literate.html">./literate.html</a></li>
+<li><a href="./style.html">./style.html</a></li>
+</ul>
+#+end_export
+
+The preceding script was written with literate programming.
+For more information, refer to [[./about.html][About]].
+
+* About
+:properties:
+:export_file_name: about.html
+:end:
+
+The power of literate programming is not that the code and documentation coexist in a file,
+it's actually that you can structure the file in the most natural way for documentation and then tangle the code from that.
+** Designate that the script is POSIX shell
+#+name: shebang
+#+begin_src sh
+  #!/bin/sh
+#+end_src
+
+** Set reasonable default options
+
+From [[https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_26][2.15 Special Built-In Utilities]].
+
+*** Exit early
+#+begin_quote
+When this option is on, when any command fails (for any of the reasons listed in [[https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_08_01][2.8.1 Consequences of Shell Errors]] or by returning an [[https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#exit][exit]] status greater than zero), the shell immediately shall exit, as if by executing the exit special built-in utility with no arguments
+#+end_quote
+
+#+name: errexit
+#+begin_src sh
+  set -e
+#+end_src
+
+*** Disable pathname expansion
+#+begin_quote
+The shell shall disable pathname expansion.
+#+end_quote
+
+#+name: noglob
+#+begin_src sh
+  set -f
+#+end_src
+
+*** Warn about unset variables
+#+begin_quote
+When the shell tries to expand, in a parameter expansion or an arithmetic expansion, an unset parameter other than the '@' and '*' special parameters, it shall write a message to standard error and the expansion shall fail with the consequences specified in [[https://pubs.opengroup.org/onlinepubs/007904875/utilities/xcu_chap02.html#tag_02_08_01][2.8.1 Consequences of Shell Errors]].
+#+end_quote
+
+#+name: nounset
+#+begin_src sh
+  set -u
+#+end_src
+
+** Add usage
+
+Wrap the messaging in a function so that the caller can control the exit.
+
+#+name: usage
+#+begin_src sh
+  usage() {
+    cat <<EOF
+  Justify the expense of a .sh domain by presenting my site as a POSIX shell script.
+  I guess it may as well list the pages.
+
+  Usage:
+    ./jdb.sh
+
+  Examples:
+    ./jdb.sh
+  EOF
+  }
+#+end_src
+
+** Support the ~--help~ option
+
+Surely this is the most common mechanism of command line tool discovery.
+
+#+name: help
+#+begin_src sh
+  case "$1" in
+    -h|--help)
+      usage
+
+      exit 0
+      ;;
+    ,*)
+      printf "Unknown option: %s\n" "$1" >&2
+      usage
+
+      exit 1
+      ;;
+  esac
+#+end_src
+
+** Check for required arguments
+There are none yet.
+
+#+name: argc
+#+begin_src sh :noweb strip-export
+  if [ "$#" -ne 0 ]; then
+    <<help>>
+  fi
+#+end_src
+** List all the HTML pages
+
+#+name: ls
+#+begin_src sh :noweb yes
+  set +f
+  ls -1 ./**/*.html ./*.html | sort
+  <<noglob>>
+#+end_src
+
+** Convert paths to HTML
+
+#+name: linkify
+#+begin_src emacs-lisp :var data="" :var width="\\textwidth" :results output
+  (progn
+    (princ "<ul>\n")
+    (dolist (line (split-string data "\n"))
+      (cond ((equal line "") nil)
+            ((equal line "./index.html") nil)
+            (t (princ (format "<li><a href=\"%s\">%s</a></li>\n" line line)))))
+    (princ "</ul>\n"))
+#+end_src
+

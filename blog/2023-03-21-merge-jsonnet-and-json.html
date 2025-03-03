@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- 2025-03-03 Mon 10:50 -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Merge Jsonnet and JSON</title>
+<meta name="author" content="Jack Baldry" />
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="../stylesheet.css" />
+</head>
+<body>
+<div id="content" class="content">
+<header>
+<h1 class="title">Merge Jsonnet and JSON</h1>
+</header><nav id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#orga7f4d5d">1. Problem with binary <code>+</code> operator</a></li>
+<li><a href="#orged976b6">2. Problem with <code>std.mergePatch</code></a></li>
+<li><a href="#orga575186">3. Defining <code>mergePatchAll</code></a></li>
+</ul>
+</div>
+</nav>
+<div id="outline-container-orga7f4d5d" class="outline-2">
+<h2 id="orga7f4d5d"><span class="section-number-2">1.</span> Problem with binary <code>+</code> operator</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Merging Jsonnet and JSON with <code>+</code> doesn't recursively merge objects because there is no way for the JSON to use the <code>+:</code> syntax sugar.
+</p>
+
+<p>
+For example, evaluating the following Jsonnet:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-jsonnet" id="org5d94c14"><span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">jsonnet</span> = { a: { b: <span style="color: #64aa0f;">2</span>, z: <span style="color: #64aa0f;">26</span> } };
+<span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">json</span> = <span style="color: #3dbbb0;">std.parseJson</span>(<span style="color: #f06a3f;">'{ "a": { "c": 3 } }'</span>);
+
+jsonnet + json
+</pre>
+</div>
+
+<p>
+Produces the JSON:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-json">{
+   "a": {
+      "c": 3
+   }
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orged976b6" class="outline-2">
+<h2 id="orged976b6"><span class="section-number-2">2.</span> Problem with <code>std.mergePatch</code></h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Because <code>std.mergePatch</code> adheres to <a href="https://tools.ietf.org/html/rfc7396">RFC 7396</a>, it doesn't respect hidden Jsonnet fields.
+</p>
+
+<p>
+For example, evaluating the following Jsonnet:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-jsonnet" id="orge838e97"><span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">jsonnet</span> = { visible: <span style="color: #64aa0f;">true</span>, hidden:: <span style="color: #64aa0f;">true</span> };
+<span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">json</span> = <span style="color: #3dbbb0;">std.parseJson</span>(<span style="color: #f06a3f;">'{ "additional": true }'</span>);
+
+<span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">merged</span> = <span style="color: #3dbbb0;">std.mergePatch</span>(jsonnet, json);
+
+{
+  <span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">visible_fields</span> = <span style="color: #3dbbb0;">std.objectFields</span>(merged),
+<span style="color: #c48702; font-weight: bold;">  hidden_fields:</span> <span style="color: #3dbbb0;">std.setDiff</span>(<span style="color: #3dbbb0;">std.objectFieldsAll</span>(merged), visible_fields),
+<span style="color: #c48702; font-weight: bold;">  visible_fields:</span> visible_fields,
+}
+</pre>
+</div>
+
+<p>
+Produces the JSON (note the absent "hidden" field):
+</p>
+
+<div class="org-src-container">
+<pre class="src src-json">{
+   "hidden_fields": [ ],
+   "visible_fields": [
+      "additional",
+      "visible"
+   ]
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orga575186" class="outline-2">
+<h2 id="orga575186"><span class="section-number-2">3.</span> Defining <code>mergePatchAll</code></h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Semantics of <code>std.mergePatch</code> but including hidden fields.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-jsonnet" id="org740adb6"><span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #3dbbb0;">mergePatchAll</span>(target, patch) =
+  <span style="color: #ff7a7f; font-weight: bold;">if</span> <span style="color: #3dbbb0;">std.isObject</span>(patch) <span style="color: #ff7a7f; font-weight: bold;">then</span>
+    <span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">target_object</span> =
+      <span style="color: #ff7a7f; font-weight: bold;">if</span> <span style="color: #3dbbb0;">std.isObject</span>(target) <span style="color: #ff7a7f; font-weight: bold;">then</span> target <span style="color: #ff7a7f; font-weight: bold;">else</span> {};
+    <span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">visible_target_fields</span> =
+      <span style="color: #ff7a7f; font-weight: bold;">if</span> <span style="color: #3dbbb0;">std.isObject</span>(target_object) <span style="color: #ff7a7f; font-weight: bold;">then</span> <span style="color: #3dbbb0;">std.objectFields</span>(target_object) <span style="color: #ff7a7f; font-weight: bold;">else</span> [];
+    <span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">hidden_target_fields</span> =
+      <span style="color: #ff7a7f; font-weight: bold;">if</span> <span style="color: #3dbbb0;">std.isObject</span>(target_object) <span style="color: #ff7a7f; font-weight: bold;">then</span> <span style="color: #3dbbb0;">std.setDiff</span>(<span style="color: #3dbbb0;">std.objectFieldsAll</span>(target_object), visible_target_fields) <span style="color: #ff7a7f; font-weight: bold;">else</span> [];
+
+    <span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">patch_fields</span> = <span style="color: #3dbbb0;">std.objectFields</span>(patch);
+    <span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">patch_null_fields</span> = [k <span style="color: #ff7a7f; font-weight: bold;">for</span> k <span style="color: #ff7a7f; font-weight: bold;">in</span> patch_fields <span style="color: #ff7a7f; font-weight: bold;">if</span> patch[k] == <span style="color: #64aa0f;">null</span>];
+    <span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">visible_target_fields_also_in_patch</span> = <span style="color: #3dbbb0;">std.setUnion</span>(visible_target_fields, patch_fields);
+    <span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">hidden_target_fields_also_in_patch</span> = <span style="color: #3dbbb0;">std.setUnion</span>(hidden_target_fields, patch_fields);
+
+    <span style="color: #3dbbb0;">std.foldr</span>(
+      <span style="color: #ff7a7f; font-weight: bold;">function</span>(k, acc)
+        acc +
+        <span style="color: #ff7a7f; font-weight: bold;">if</span> !<span style="color: #3dbbb0;">std.objectHas</span>(patch, k) <span style="color: #ff7a7f; font-weight: bold;">then</span>
+<span style="color: #c48702; font-weight: bold;">          { [k]::</span> target_object[k] }
+        <span style="color: #ff7a7f; font-weight: bold;">else</span> <span style="color: #ff7a7f; font-weight: bold;">if</span> !<span style="color: #3dbbb0;">std.objectHasAll</span>(target_object, k) <span style="color: #ff7a7f; font-weight: bold;">then</span>
+<span style="color: #c48702; font-weight: bold;">          { [k]:</span> $.mergePatchAll(<span style="color: #64aa0f;">null</span>, patch[k]) tailstrict }
+        <span style="color: #ff7a7f; font-weight: bold;">else</span>
+<span style="color: #c48702; font-weight: bold;">          { [k]:</span> $.mergePatchAll(target_object[k], patch[k]) tailstrict }
+      , <span style="color: #3dbbb0;">std.setDiff</span>(hidden_target_fields_also_in_patch, patch_null_fields), {
+<span style="color: #c48702; font-weight: bold;">        [k]:</span>
+          <span style="color: #ff7a7f; font-weight: bold;">if</span> !<span style="color: #3dbbb0;">std.objectHas</span>(patch, k) <span style="color: #ff7a7f; font-weight: bold;">then</span>
+            target_object[k]
+          <span style="color: #ff7a7f; font-weight: bold;">else</span> <span style="color: #ff7a7f; font-weight: bold;">if</span> !<span style="color: #3dbbb0;">std.objectHas</span>(target_object, k) <span style="color: #ff7a7f; font-weight: bold;">then</span>
+            $.mergePatchAll(<span style="color: #64aa0f;">null</span>, patch[k]) tailstrict
+          <span style="color: #ff7a7f; font-weight: bold;">else</span>
+            $.mergePatchAll(target_object[k], patch[k]) tailstrict
+        <span style="color: #ff7a7f; font-weight: bold;">for</span> k <span style="color: #ff7a7f; font-weight: bold;">in</span> <span style="color: #3dbbb0;">std.setDiff</span>(visible_target_fields_also_in_patch, patch_null_fields)
+      }
+    )
+  <span style="color: #ff7a7f; font-weight: bold;">else</span> patch;
+</pre>
+</div>
+
+<p>
+For example, evaluating the following Jsonnet:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-jsonnet" id="orgeb3c30d">&lt;&lt;mergePatchAll&gt;&gt;
+<span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">jsonnet</span> = { visible: <span style="color: #64aa0f;">true</span>, hidden:: <span style="color: #64aa0f;">true</span> };
+<span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">json</span> = <span style="color: #3dbbb0;">std.parseJson</span>(<span style="color: #f06a3f;">'{ "additional": true }'</span>);
+
+<span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">merged</span> = mergePatchAll(jsonnet, json);
+
+{
+  <span style="color: #ff7a7f; font-weight: bold;">local</span> <span style="color: #6fafff;">visible_fields</span> = <span style="color: #3dbbb0;">std.objectFields</span>(merged),
+<span style="color: #c48702; font-weight: bold;">  hidden_fields:</span> <span style="color: #3dbbb0;">std.setDiff</span>(<span style="color: #3dbbb0;">std.objectFieldsAll</span>(merged), visible_fields),
+<span style="color: #c48702; font-weight: bold;">  visible_fields:</span> visible_fields,
+}
+</pre>
+</div>
+
+<p>
+Produces the JSON:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-json">{
+   "hidden_fields": [
+      "hidden"
+   ],
+   "visible_fields": [
+      "additional",
+      "visible"
+   ]
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+Last update : 03 Mar 2025
+</div>
+</body>
+</html>
