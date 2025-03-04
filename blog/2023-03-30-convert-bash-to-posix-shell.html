@@ -1,60 +1,41 @@
-<!DOCTYPE html><html><head><link rel="stylesheet" type="text/css" href="../stylesheet.css" /><meta charset="utf-8" /><meta title="Convert Bash to POSIX shell" /><meta author="Jack Baldry" /><meta generator="Org" /></head><body><div id="content" class="content"><header><h1 class="title">Convert Bash to POSIX shell</h1></header><nav id="table-of-contents" role="doc-toc"><h2>Table of contents</h2>
-<div id="text-table-of-contents" role="doc-toc">
-<ul><li><a href="#orgf7e3cea">1. Always use ShellCheck</a></li>
-<li><a href="#orgb328ed4">2. <code>-o pipefail</code> is undefined</a></li>
-<li><a href="#org2325f41">3. <code>echo</code> flags are undefined</a></li>
-<li><a href="#org128da94">4. <code>&amp;&gt;/dev/null</code> is a Bash-ism</a></li>
-<li><a href="#orga3e633e">5. <code>function</code> keyword does not exist</a></li>
-<li><a href="#org63925af">6. <code>[[</code> is a Bash test</a></li>
-<li><a href="#org13dbf38">7. Arrays don't exist</a></li>
-<li><a href="#org59fee27">8. No <code>local</code> keyword</a></li>
-<li><a href="#orge55e5cb">9. No HERESTRINGs</a></li>
-</ul></div>
-</nav><div id="outline-container-orgf7e3cea" class="outline-2">
+<!DOCTYPE html><html><head><link rel="stylesheet" type="text/css" href="../stylesheet.css" /><meta charset="utf-8" /><meta title="Convert Bash to POSIX shell" /><meta author="Jack Baldry" /><meta generator="Org" /></head><body><div id="layout" class="layout"><header><h1 class="title">Convert Bash to POSIX shell</h1></header><main id="content" class="content"><div id="outline-container-orgf7e3cea" class="outline-2">
 <h2 id="orgf7e3cea"><span class="section-number-2">1.</span> Always use <a href="https://www.shellcheck.net/">ShellCheck</a></h2>
-</div>
-
-<div id="outline-container-orgb328ed4" class="outline-2">
+</div><div id="outline-container-orgb328ed4" class="outline-2">
 <h2 id="orgb328ed4"><span class="section-number-2">2.</span> <code>-o pipefail</code> is undefined</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 Remove it
 </p>
 </div>
-</div>
-<div id="outline-container-org2325f41" class="outline-2">
+</div><div id="outline-container-org2325f41" class="outline-2">
 <h2 id="org2325f41"><span class="section-number-2">3.</span> <code>echo</code> flags are undefined</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 Probably easiest to remove ANSI codes.
 </p>
 </div>
-</div>
-<div id="outline-container-org128da94" class="outline-2">
+</div><div id="outline-container-org128da94" class="outline-2">
 <h2 id="org128da94"><span class="section-number-2">4.</span> <code>&amp;&gt;/dev/null</code> is a Bash-ism</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 Replace with <code>&gt;/dev/null 2&gt;&amp;1</code>.
 </p>
 </div>
-</div>
-<div id="outline-container-orga3e633e" class="outline-2">
+</div><div id="outline-container-orga3e633e" class="outline-2">
 <h2 id="orga3e633e"><span class="section-number-2">5.</span> <code>function</code> keyword does not exist</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 Replace <code>function NAME { }</code> with <code>NAME() { }</code>.
 </p>
 </div>
-</div>
-<div id="outline-container-org63925af" class="outline-2">
+</div><div id="outline-container-org63925af" class="outline-2">
 <h2 id="org63925af"><span class="section-number-2">6.</span> <code>[[</code> is a Bash test</h2>
 <div class="outline-text-2" id="text-6">
 <p>
 Replace <code>[[ ... ]]</code> with <code>[ ... ]</code>.
 </p>
 </div>
-</div>
-<div id="outline-container-org13dbf38" class="outline-2">
+</div><div id="outline-container-org13dbf38" class="outline-2">
 <h2 id="org13dbf38"><span class="section-number-2">7.</span> Arrays don't exist</h2>
 <div class="outline-text-2" id="text-7">
 <p>
@@ -115,16 +96,14 @@ Producing the following output:
 VALUE
 </pre>
 </div>
-</div>
-<div id="outline-container-org59fee27" class="outline-2">
+</div><div id="outline-container-org59fee27" class="outline-2">
 <h2 id="org59fee27"><span class="section-number-2">8.</span> No <code>local</code> keyword</h2>
 <div class="outline-text-2" id="text-8">
 <p>
 Remove them and be careful with naming.
 </p>
 </div>
-</div>
-<div id="outline-container-orge55e5cb" class="outline-2">
+</div><div id="outline-container-orge55e5cb" class="outline-2">
 <h2 id="orge55e5cb"><span class="section-number-2">9.</span> No HERESTRINGs</h2>
 <div class="outline-text-2" id="text-9">
 <p>
@@ -139,4 +118,16 @@ cat &lt;&lt;POSIX_HERESTRING
 </pre>
 </div>
 </div>
-</div></div></body></html>
+</div></main><div id="toc" class="toc"><nav id="table-of-contents" role="doc-toc"><h2>Table of contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul><li><a href="#orgf7e3cea">1. Always use ShellCheck</a></li>
+<li><a href="#orgb328ed4">2. <code>-o pipefail</code> is undefined</a></li>
+<li><a href="#org2325f41">3. <code>echo</code> flags are undefined</a></li>
+<li><a href="#org128da94">4. <code>&amp;&gt;/dev/null</code> is a Bash-ism</a></li>
+<li><a href="#orga3e633e">5. <code>function</code> keyword does not exist</a></li>
+<li><a href="#org63925af">6. <code>[[</code> is a Bash test</a></li>
+<li><a href="#org13dbf38">7. Arrays don't exist</a></li>
+<li><a href="#org59fee27">8. No <code>local</code> keyword</a></li>
+<li><a href="#orge55e5cb">9. No HERESTRINGs</a></li>
+</ul></div>
+</nav></div></div></body></html>

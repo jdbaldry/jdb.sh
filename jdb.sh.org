@@ -44,11 +44,14 @@
            :publishing-directory "./blog"
            :section-numbers t
            :with-toc t)))
+
+  (jdb/export-to-html)
+  (org-publish "blog" t)
 #+end_src
-**** Work around hardcoded strings
+*** Work around hardcoded strings
 
 #+begin_src org :results value raw
-#+language: en
+  ,#+language: en
 #+end_src
 
 #+RESULTS:
@@ -58,10 +61,10 @@
 #+begin_src emacs-lisp
   (defconst org-export-dictionary
     '(("Table of Contents"
-      ("en" :html "Table of contents" :utf-8 "Table of contents"))))
+       ("en" :html "Table of contents" :utf-8 "Table of contents"))))
 #+end_src
 
-**** Use HTML5
+*** Use HTML5
 
 From [[https://orgmode.org/manual/HTML-doctypes.html][HTML Doctypes]].
 
@@ -75,73 +78,81 @@ Org’s HTML exporter does not by default enable new block elements introduced w
   (setq org-html-html5-fancy t)
 #+end_src
 
-**** Define transcode functions
+*** Define transcode functions
 
 #+begin_src emacs-lisp emacs-lisp :results none
-    (defun jdb/html--parse-string (str)
-      "Parse STR and return a DOM."
-      (with-temp-buffer
-        (insert (or str ""))
-        (libxml-parse-html-region (point-min) (point-max))))
+  (defun jdb/html--parse-string (str)
+    "Parse STR and return a DOM."
+    (with-temp-buffer
+      (insert (or str ""))
+      (libxml-parse-html-region (point-min) (point-max))))
 
-    (defun jdb/html--build-body (contents info &rest other)
-      "Return information for the <body>..</body> of the HTML output.
-         CONTENTS is the transcoded contents string.
-         INFO is a plist used as a communication channel.
-         OTHER is a plist for additional nodes."
-      (setq node-content (dom-node "div" '((id . "content") (class . "content"))))
+  (defun jdb/html--build-body (contents info &rest other)
+    "Return information for the <body>..</body> of the HTML output.
+       CONTENTS is the transcoded contents string.
+       INFO is a plist used as a communication channel.
+       OTHER is a plist for additional nodes."
+    (let ((node-body (dom-node "body" ()))
+          (node-layout (dom-node "div" '((id . "layout") (class . "layout"))))
+          (node-main (dom-node "main" '((id . "content") (class . "content"))))
+          (node-toc (dom-node "div" '((id . "toc") (class . "toc")))))
       (when (plist-get other :before)
-        (dolist (node (plist-get other :before)) (dom-append-child node-content node)))
-      (dolist (node (dom-children (dom-by-tag (jdb/html--parse-string contents) 'body))) (dom-append-child node-content node))
+        (dolist (node (plist-get other :before)) (dom-append-child node-layout node)))
+      (dolist (node (dom-non-text-children (dom-by-tag (jdb/html--parse-string contents) 'body)))
+        (cond ((string= (dom-tag node) "nav") (dom-append-child node-toc node))
+              (t (dom-append-child node-main node))))
       (when (plist-get other :after)
-        (dolist (node (plist-get other :after)) (dom-append-child node-content node)))
-      (dom-node "body" () node-content))
+        (dolist (node (plist-get other :after)) (dom-append-child node-layout node)))
+      (dom-append-child node-layout node-main)
+      (dom-append-child node-layout node-toc)
+      (dom-append-child node-body node-layout)))
 
-    (defun jdb/html--build-head (info &rest other)
-      "Return information for the <head>..</head> of the HTML output.
-         INFO is a plist used as a communication channel.
-         OTHER is a plist for additional nodes."
-      (setq node-head (dom-node "head" ()))
-      (dolist (node (dom-children (dom-by-tag (jdb/html--parse-string (plist-get info :html-head)) 'head)))
-        (dom-append-child node-head node))
-      (dolist (node (dom-children (dom-by-tag (jdb/html--parse-string (plist-get info :html-head-extra)) 'head)))
-        (dom-append-child node-head node))
-      (when (and (plist-get info :html-htmlized-css-url)
-                 (eq org-html-htmlize-output-type 'css))
-        (dom-append-child node-head
-                          (dom-node "link" `((rel . "stylesheet")
-                                             (href . ,(plist-get info :html-htmlized-css-url))
-                                             (type . "text/css")))))
-      (when (plist-get other :before)
-        (dolist (node (plist-get other :before)) (dom-add-child-before node-head node)))
-      (when (plist-get other :after)
-        (dolist (node (plist-get other :after)) (dom-append-child node-head node)))
-      node-head)
+  (defun jdb/html--build-head (info &rest other)
+    "Return information for the <head>..</head> of the HTML output.
+       INFO is a plist used as a communication channel.
+       OTHER is a plist for additional nodes."
+    (setq node-head (dom-node "head" ()))
+    (when (plist-get other :before)
+      (dolist (node (plist-get other :before)) (dom-append-child node-head node)))
+    (dolist (node (dom-children (dom-by-tag (jdb/html--parse-string (plist-get info :html-head)) 'head)))
+      (dom-append-child node-head node))
+    (dolist (node (dom-children (dom-by-tag (jdb/html--parse-string (plist-get info :html-head-extra)) 'head)))
+      (dom-append-child node-head node))
+    (when (and (plist-get info :html-htmlized-css-url)
+               (eq org-html-htmlize-output-type 'css))
+      (dom-append-child node-head
+                        (dom-node "link" `((rel . "stylesheet")
+                                           (href . ,(plist-get info :html-htmlized-css-url))
+                                           (type . "text/css")))))
+    (when (plist-get other :after)
+      (dolist (node (plist-get other :after)) (dom-append-child node-head node)))
+    node-head)
 
-    (defun jdb/html-template (contents info)
-      "Return complete document string after HTML conversion.
-         CONTENTS is the transcoded contents string.
-         INFO is a plist holding export options."
-      (let* ((title (org-export-data (plist-get info :title) info))
-             (node-title (dom-node "meta" `((title . ,title))))
-             (node-charset (dom-node "meta" '((charset . "utf-8"))))
-             (node-author (dom-node "meta" `((author . ,(org-export-data (plist-get info :author) info)))))
-             (node-generator (dom-node "meta" '((generator . "Org"))))
-             (node-head (jdb/html--build-head info :after (list node-charset node-title node-author node-generator)))
-             (node-h1 (dom-node "h1" '((class . "title")) title))
-             (node-header (dom-node "header" () node-h1))
-             (node-body (jdb/html--build-body contents info :before (list node-header)))
-             (node-html (dom-node "html" () node-head node-body)))
-        (with-temp-buffer (insert "<!DOCTYPE html>") (dom-print node-html) (buffer-string))))
-    (org-export-define-derived-backend 'jdb/html 'html
-      :translate-alist '((template . jdb/html-template)))
+  (defun jdb/html-template (contents info)
+    "Return complete document string after HTML conversion.
+       CONTENTS is the transcoded contents string.
+       INFO is a plist holding export options."
+    (let* ((title (org-export-data (plist-get info :title) info))
+           (node-title (dom-node "meta" `((title . ,title))))
+           (node-charset (dom-node "meta" '((charset . "utf-8"))))
+           (node-author (dom-node "meta" `((author . ,(org-export-data (plist-get info :author) info)))))
+           (node-generator (dom-node "meta" '((generator . "Org"))))
+           (node-head (jdb/html--build-head info :after (list node-charset node-title node-author node-generator)))
+           (node-h1 (dom-node "h1" '((class . "title")) title))
+           (node-header (dom-node "header" () node-h1))
+           (node-body (jdb/html--build-body contents info :before (list node-header)))
+           (node-html (dom-node "html" () node-head node-body)))
+      (with-temp-buffer (insert "<!DOCTYPE html>") (dom-print node-html) (buffer-string))))
+  (org-export-define-derived-backend 'jdb/html 'html
+    :translate-alist '((template . jdb/html-template)))
 #+end_src
 
-**** Define export functions
+*** Define export functions
 
 #+name: export-to-html
 #+begin_src emacs-lisp :results none
   (defun jdb/export-subtree-to-html ()
+    (interactive)
     (let ((filename (cdr (assoc "EXPORT_FILE_NAME" (org-entry-properties)))))
       (org-export-to-file 'jdb/html filename nil t)
       (shell-command (format "prettier -w --print-width 999 %s" filename))))
@@ -152,7 +163,7 @@ Org’s HTML exporter does not by default enable new block elements introduced w
     (org-map-entries #'jdb/export-subtree-to-html "EXPORT_FILE_NAME={.+}"))
 #+end_src
 
-**** Define cleaner postamble
+*** Define cleaner postamble
 
 #+name: org-html-postamble
 #+begin_src emacs-lisp
@@ -201,7 +212,7 @@ Have Org src within the Org file.
 ** Remove default style
 
 #+begin_src org :results output raw
-#+options: html-style:nil
+  ,#+options: html-style:nil
 #+end_src
 
 #+RESULTS:
@@ -212,7 +223,7 @@ Have Org src within the Org file.
 Org tangles all the following sections into [[./reset.css][reset.css]].
 
 #+begin_src org :results output raw
-#+html_head: <link rel="stylesheet" type="text/css" href="reset.css" />
+  ,#+html_head: <link rel="stylesheet" type="text/css" href="reset.css" />
 #+end_src
 
 #+RESULTS:
@@ -300,7 +311,7 @@ From [[https://webdev.bryanhogan.com/css/css-reset/][CSS Reset]] and [[https://w
 Uses the ~html_head~ metadata to set the stylesheet.
 
 #+begin_src org :results value raw
-#+html_head: <link rel="stylesheet" type="text/css" href="stylesheet.css" />
+  ,#+html_head: <link rel="stylesheet" type="text/css" href="stylesheet.css" />
 #+end_src
 
 #+RESULTS:
@@ -313,17 +324,19 @@ Tangle the stylesheet as ~stylesheet.css~.
 
   <<body>>
   <<code>>
+  <<grid>>
   <<headings>>
   <<links>>
+  <<pre>>
 #+end_src
 *** Set global variables
 
 #+name: variables
 #+begin_src css :noweb no-export
   :root {
-    <<border>>
-    <<color>>
-    <<font-family>>
+      <<border>>
+      <<color>>
+      <<font-family>>
   }
 #+end_src
 
@@ -391,8 +404,34 @@ Tangle the stylesheet as ~stylesheet.css~.
 #+name: grid
 #+begin_src css
   .layout {
-    display: grid;
-    grid-template-columns: 1fr /* nav */ 3fr /* content */;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-areas:
+          "header"
+          "toc"
+          "content";
+  }
+
+  @media only screen and (min-width: 48rem) {
+      .layout {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          grid-template-areas:
+              "header header header"
+              "content content toc";
+      }
+  }
+
+  header {
+      grid-area: header;
+  }
+
+  .content {
+      grid-area: content;
+  }
+
+  .toc {
+      grid-area: toc;
   }
 #+end_src
 *** Set code styling to match my editor
@@ -411,15 +450,23 @@ Tangle the stylesheet as ~stylesheet.css~.
   }
 #+end_src
 
+*** Prevent preformatted text overflowing its box
+
+#+name: pre
+#+begin_src css
+  pre {
+      overflow-x: auto;
+  }
+#+end_src
 *** Set body
 
 #+name: body
 #+begin_src css
   body {
-    background-color: var(--color-background);
-    color: var(--color);
-    font-family: var(--font-family);
-    font-size: var(--font-size-base);
+      background-color: var(--color-background);
+      color: var(--color);
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
   }
 #+end_src
 *** Set links
@@ -427,7 +474,7 @@ Tangle the stylesheet as ~stylesheet.css~.
 #+name: links
 #+begin_src css
   a {
-    color: var(--color-link);
+      color: var(--color-link);
   }
 #+end_src
 *** Set headings
@@ -435,35 +482,35 @@ Tangle the stylesheet as ~stylesheet.css~.
 #+name: headings
 #+begin_src css
   h1 {
-    color: var(--color-org-1);
-    font-size: var(--text-size-4xl);
+      color: var(--color-org-1);
+      font-size: var(--text-size-4xl);
   }
   h2 {
-    color: var(--color-org-2);
-    font-size: var(--text-size-3xl);
+      color: var(--color-org-2);
+      font-size: var(--text-size-3xl);
   }
   h3 {
-    color: var(--color-org-3);
-    font-size: var(--text-size-2xl);
+      color: var(--color-org-3);
+      font-size: var(--text-size-2xl);
   }
   h4 {
-    color: var(--color-org-4);
-    font-size: var(--text-size-xl);
+      color: var(--color-org-4);
+      font-size: var(--text-size-xl);
   }
 
-  @media (min-width: 48rem) {
-    h1 {
-      font-size: var(--text-size-5xl);
-    }
-    h2 {
-      font-size: var(--text-size-4xl);
-    }
-    h3 {
-      font-size: var(--text-size-3xl);
-    }
-    h4 {
-      font-size: var(--text-size-2xl);
-    }
+  @media only screen and (min-width: 48rem) {
+      h1 {
+          font-size: var(--text-size-5xl);
+      }
+      h2 {
+          font-size: var(--text-size-4xl);
+      }
+      h3 {
+          font-size: var(--text-size-3xl);
+      }
+      h4 {
+          font-size: var(--text-size-2xl);
+      }
   }
 #+end_src
 * Create an index page

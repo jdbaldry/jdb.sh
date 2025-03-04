@@ -9,93 +9,71 @@
     <meta generator="Org" />
   </head>
   <body>
-    <div id="content" class="content">
+    <div id="layout" class="layout">
       <header><h1 class="title">About</h1></header>
-      <nav id="table-of-contents" role="doc-toc">
-        <h2>Table of contents</h2>
-        <div id="text-table-of-contents" role="doc-toc">
-          <ul>
-            <li><a href="#orgabd4b79">1. Designate that the script is POSIX shell</a></li>
-            <li>
-              <a href="#org53332ae">2. Set reasonable default options</a>
-              <ul>
-                <li><a href="#org540e574">2.1. Exit early</a></li>
-                <li><a href="#orgf56f467">2.2. Disable pathname expansion</a></li>
-                <li><a href="#orgd9d23e9">2.3. Warn about unset variables</a></li>
-              </ul>
-            </li>
-            <li><a href="#org5a4f7a9">3. Add usage</a></li>
-            <li>
-              <a href="#org1926611">4. Support the <code>--help</code> option</a>
-            </li>
-            <li><a href="#org351c0e5">5. Check for required arguments</a></li>
-            <li><a href="#org2002b57">6. List all the HTML pages</a></li>
-            <li><a href="#orgf5f30f6">7. Convert paths to HTML</a></li>
-          </ul>
-        </div>
-      </nav>
-      <p>The power of literate programming is not that the code and documentation coexist in a file, it's actually that you can structure the file in the most natural way for documentation and then tangle the code from that.</p>
-      <div id="outline-container-orgabd4b79" class="outline-2">
-        <h2 id="orgabd4b79"><span class="section-number-2">1.</span> Designate that the script is POSIX shell</h2>
-        <div class="outline-text-2" id="text-1">
-          <div class="org-src-container">
-            <pre class="src src-sh" id="orge6720b3"><span style="color: #cf9f7f; font-style: italic;">#</span><span style="color: #cf9f7f; font-style: italic;">!/bin/</span><span style="color: #c48702; font-weight: bold;">sh</span>
-</pre>
-          </div>
-        </div>
-      </div>
-      <div id="outline-container-org53332ae" class="outline-2">
-        <h2 id="org53332ae"><span class="section-number-2">2.</span> Set reasonable default options</h2>
-        <div class="outline-text-2" id="text-2">
-          <p>From <a href="https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_26">2.15 Special Built-In Utilities</a>.</p>
-        </div>
-        <div id="outline-container-org540e574" class="outline-3">
-          <h3 id="org540e574"><span class="section-number-3">2.1.</span> Exit early</h3>
-          <div class="outline-text-3" id="text-2-1">
-            <blockquote>
-              <p>When this option is on, when any command fails (for any of the reasons listed in <a href="https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_08_01">2.8.1 Consequences of Shell Errors</a> or by returning an <a href="https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#exit">exit</a> status greater than zero), the shell immediately shall exit, as if by executing the exit special built-in utility with no arguments</p>
-            </blockquote>
-
+      <main id="content" class="content">
+        <p>The power of literate programming is not that the code and documentation coexist in a file, it's actually that you can structure the file in the most natural way for documentation and then tangle the code from that.</p>
+        <div id="outline-container-orgda4e0c6" class="outline-2">
+          <h2 id="orgda4e0c6"><span class="section-number-2">1.</span> Designate that the script is POSIX shell</h2>
+          <div class="outline-text-2" id="text-1">
             <div class="org-src-container">
-              <pre class="src src-sh" id="orgada73a4"><span style="color: #ff7a7f; font-weight: bold;">set</span> -e
+              <pre class="src src-sh" id="org830697d"><span style="color: #cf9f7f; font-style: italic;">#</span><span style="color: #cf9f7f; font-style: italic;">!/bin/</span><span style="color: #c48702; font-weight: bold;">sh</span>
 </pre>
             </div>
           </div>
         </div>
-        <div id="outline-container-orgf56f467" class="outline-3">
-          <h3 id="orgf56f467"><span class="section-number-3">2.2.</span> Disable pathname expansion</h3>
-          <div class="outline-text-3" id="text-2-2">
-            <blockquote>
-              <p>The shell shall disable pathname expansion.</p>
-            </blockquote>
+        <div id="outline-container-orgc44b3ae" class="outline-2">
+          <h2 id="orgc44b3ae"><span class="section-number-2">2.</span> Set reasonable default options</h2>
+          <div class="outline-text-2" id="text-2">
+            <p>From <a href="https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_26">2.15 Special Built-In Utilities</a>.</p>
+          </div>
+          <div id="outline-container-org070305a" class="outline-3">
+            <h3 id="org070305a"><span class="section-number-3">2.1.</span> Exit early</h3>
+            <div class="outline-text-3" id="text-2-1">
+              <blockquote>
+                <p>When this option is on, when any command fails (for any of the reasons listed in <a href="https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_08_01">2.8.1 Consequences of Shell Errors</a> or by returning an <a href="https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#exit">exit</a> status greater than zero), the shell immediately shall exit, as if by executing the exit special built-in utility with no arguments</p>
+              </blockquote>
 
-            <div class="org-src-container">
-              <pre class="src src-sh" id="org988a6b3"><span style="color: #ff7a7f; font-weight: bold;">set</span> -f
+              <div class="org-src-container">
+                <pre class="src src-sh" id="org4823fb3"><span style="color: #ff7a7f; font-weight: bold;">set</span> -e
 </pre>
+              </div>
+            </div>
+          </div>
+          <div id="outline-container-org41bedb7" class="outline-3">
+            <h3 id="org41bedb7"><span class="section-number-3">2.2.</span> Disable pathname expansion</h3>
+            <div class="outline-text-3" id="text-2-2">
+              <blockquote>
+                <p>The shell shall disable pathname expansion.</p>
+              </blockquote>
+
+              <div class="org-src-container">
+                <pre class="src src-sh" id="org83f901e"><span style="color: #ff7a7f; font-weight: bold;">set</span> -f
+</pre>
+              </div>
+            </div>
+          </div>
+          <div id="outline-container-org0d87689" class="outline-3">
+            <h3 id="org0d87689"><span class="section-number-3">2.3.</span> Warn about unset variables</h3>
+            <div class="outline-text-3" id="text-2-3">
+              <blockquote>
+                <p>When the shell tries to expand, in a parameter expansion or an arithmetic expansion, an unset parameter other than the '@' and '*' special parameters, it shall write a message to standard error and the expansion shall fail with the consequences specified in <a href="https://pubs.opengroup.org/onlinepubs/007904875/utilities/xcu_chap02.html#tag_02_08_01">2.8.1 Consequences of Shell Errors</a>.</p>
+              </blockquote>
+
+              <div class="org-src-container">
+                <pre class="src src-sh" id="orge45584d"><span style="color: #ff7a7f; font-weight: bold;">set</span> -u
+</pre>
+              </div>
             </div>
           </div>
         </div>
-        <div id="outline-container-orgd9d23e9" class="outline-3">
-          <h3 id="orgd9d23e9"><span class="section-number-3">2.3.</span> Warn about unset variables</h3>
-          <div class="outline-text-3" id="text-2-3">
-            <blockquote>
-              <p>When the shell tries to expand, in a parameter expansion or an arithmetic expansion, an unset parameter other than the '@' and '*' special parameters, it shall write a message to standard error and the expansion shall fail with the consequences specified in <a href="https://pubs.opengroup.org/onlinepubs/007904875/utilities/xcu_chap02.html#tag_02_08_01">2.8.1 Consequences of Shell Errors</a>.</p>
-            </blockquote>
+        <div id="outline-container-org644c9b7" class="outline-2">
+          <h2 id="org644c9b7"><span class="section-number-2">3.</span> Add usage</h2>
+          <div class="outline-text-2" id="text-3">
+            <p>Wrap the messaging in a function so that the caller can control the exit.</p>
 
             <div class="org-src-container">
-              <pre class="src src-sh" id="org8c6f35d"><span style="color: #ff7a7f; font-weight: bold;">set</span> -u
-</pre>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div id="outline-container-org5a4f7a9" class="outline-2">
-        <h2 id="org5a4f7a9"><span class="section-number-2">3.</span> Add usage</h2>
-        <div class="outline-text-2" id="text-3">
-          <p>Wrap the messaging in a function so that the caller can control the exit.</p>
-
-          <div class="org-src-container">
-            <pre class="src src-sh" id="orgf2ad75a"><span style="color: #3dbbb0;">usage</span>() {
+              <pre class="src src-sh" id="orgf5ecef4"><span style="color: #3dbbb0;">usage</span>() {
   cat &lt;&lt;EOF
 <span style="color: #5f9f6f; font-style: italic;">Justify the expense of a .sh domain by presenting my site as a POSIX shell script.</span>
 <span style="color: #5f9f6f; font-style: italic;">I guess it may as well list the pages.</span>
@@ -108,16 +86,16 @@
 <span style="color: #5f9f6f; font-style: italic;">EOF</span>
 }
 </pre>
+            </div>
           </div>
         </div>
-      </div>
-      <div id="outline-container-org1926611" class="outline-2">
-        <h2 id="org1926611"><span class="section-number-2">4.</span> Support the <code>--help</code> option</h2>
-        <div class="outline-text-2" id="text-4">
-          <p>Surely this is the most common mechanism of command line tool discovery.</p>
+        <div id="outline-container-orgc9252c6" class="outline-2">
+          <h2 id="orgc9252c6"><span class="section-number-2">4.</span> Support the <code>--help</code> option</h2>
+          <div class="outline-text-2" id="text-4">
+            <p>Surely this is the most common mechanism of command line tool discovery.</p>
 
-          <div class="org-src-container">
-            <pre class="src src-sh" id="org42a7bd8"><span style="color: #c48702; font-weight: bold;">case</span> <span style="color: #f06a3f;">&quot;$1&quot;</span><span style="color: #c48702; font-weight: bold;"> in</span>
+            <div class="org-src-container">
+              <pre class="src src-sh" id="org82c8355"><span style="color: #c48702; font-weight: bold;">case</span> <span style="color: #f06a3f;">&quot;$1&quot;</span><span style="color: #c48702; font-weight: bold;"> in</span>
   -h|--help)
     usage
 
@@ -131,38 +109,38 @@
     ;;
 <span style="color: #c48702; font-weight: bold;">esac</span>
 </pre>
+            </div>
           </div>
         </div>
-      </div>
-      <div id="outline-container-org351c0e5" class="outline-2">
-        <h2 id="org351c0e5"><span class="section-number-2">5.</span> Check for required arguments</h2>
-        <div class="outline-text-2" id="text-5">
-          <p>There are none yet.</p>
+        <div id="outline-container-org1d198db" class="outline-2">
+          <h2 id="org1d198db"><span class="section-number-2">5.</span> Check for required arguments</h2>
+          <div class="outline-text-2" id="text-5">
+            <p>There are none yet.</p>
 
-          <div class="org-src-container">
-            <pre class="src src-sh" id="org2e427cf"><span style="color: #c48702; font-weight: bold;">if</span> [ <span style="color: #f06a3f;">&quot;$#&quot;</span> -ne 0 ]; <span style="color: #c48702; font-weight: bold;">then</span>
+            <div class="org-src-container">
+              <pre class="src src-sh" id="org2ec0eea"><span style="color: #c48702; font-weight: bold;">if</span> [ <span style="color: #f06a3f;">&quot;$#&quot;</span> -ne 0 ]; <span style="color: #c48702; font-weight: bold;">then</span>
 
 <span style="color: #c48702; font-weight: bold;">fi</span>
 </pre>
+            </div>
           </div>
         </div>
-      </div>
-      <div id="outline-container-org2002b57" class="outline-2">
-        <h2 id="org2002b57"><span class="section-number-2">6.</span> List all the HTML pages</h2>
-        <div class="outline-text-2" id="text-6">
-          <div class="org-src-container">
-            <pre class="src src-sh" id="org5f56c23"><span style="color: #ff7a7f; font-weight: bold;">set</span> +f
+        <div id="outline-container-org50c1b73" class="outline-2">
+          <h2 id="org50c1b73"><span class="section-number-2">6.</span> List all the HTML pages</h2>
+          <div class="outline-text-2" id="text-6">
+            <div class="org-src-container">
+              <pre class="src src-sh" id="orgfdf9322"><span style="color: #ff7a7f; font-weight: bold;">set</span> +f
 ls -1 ./**/*.html ./*.html | sort
 <span style="color: #ff7a7f; font-weight: bold;">set</span> -f
 </pre>
+            </div>
           </div>
         </div>
-      </div>
-      <div id="outline-container-orgf5f30f6" class="outline-2">
-        <h2 id="orgf5f30f6"><span class="section-number-2">7.</span> Convert paths to HTML</h2>
-        <div class="outline-text-2" id="text-7">
-          <div class="org-src-container">
-            <pre class="src src-emacs-lisp" id="org2d3aa20">(<span style="color: #c48702; font-weight: bold;">progn</span>
+        <div id="outline-container-org6d2e5c0" class="outline-2">
+          <h2 id="org6d2e5c0"><span class="section-number-2">7.</span> Convert paths to HTML</h2>
+          <div class="outline-text-2" id="text-7">
+            <div class="org-src-container">
+              <pre class="src src-emacs-lisp" id="org7398322">(<span style="color: #c48702; font-weight: bold;">progn</span>
   (princ <span style="color: #f06a3f;">&quot;&lt;ul&gt;\n&quot;</span>)
   (<span style="color: #c48702; font-weight: bold;">dolist</span> (line (split-string data <span style="color: #f06a3f;">&quot;\n&quot;</span>))
     (<span style="color: #c48702; font-weight: bold;">cond</span> ((equal line <span style="color: #f06a3f;">&quot;&quot;</span>) nil)
@@ -170,8 +148,34 @@ ls -1 ./**/*.html ./*.html | sort
           (t (princ (format <span style="color: #f06a3f;">&quot;&lt;li&gt;&lt;a href=\&quot;%s\&quot;&gt;%s&lt;/a&gt;&lt;/li&gt;\n&quot;</span> line line)))))
   (princ <span style="color: #f06a3f;">&quot;&lt;/ul&gt;\n&quot;</span>))
 </pre>
+            </div>
           </div>
         </div>
+      </main>
+      <div id="toc" class="toc">
+        <nav id="table-of-contents" role="doc-toc">
+          <h2>Table of contents</h2>
+          <div id="text-table-of-contents" role="doc-toc">
+            <ul>
+              <li><a href="#orgda4e0c6">1. Designate that the script is POSIX shell</a></li>
+              <li>
+                <a href="#orgc44b3ae">2. Set reasonable default options</a>
+                <ul>
+                  <li><a href="#org070305a">2.1. Exit early</a></li>
+                  <li><a href="#org41bedb7">2.2. Disable pathname expansion</a></li>
+                  <li><a href="#org0d87689">2.3. Warn about unset variables</a></li>
+                </ul>
+              </li>
+              <li><a href="#org644c9b7">3. Add usage</a></li>
+              <li>
+                <a href="#orgc9252c6">4. Support the <code>--help</code> option</a>
+              </li>
+              <li><a href="#org1d198db">5. Check for required arguments</a></li>
+              <li><a href="#org50c1b73">6. List all the HTML pages</a></li>
+              <li><a href="#org6d2e5c0">7. Convert paths to HTML</a></li>
+            </ul>
+          </div>
+        </nav>
       </div>
     </div>
   </body>
